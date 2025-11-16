@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Filter, Trash2, Eye } from 'lucide-react';
-import { useSermons, useDeleteSermon, useBulkDeleteSermons } from '@/hooks/useSermons';
+import { useDocumentaries, useDeleteDocumentary, useBulkDeleteDocumentaries } from '@/hooks/useDocumentaries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Card } from '@/components/ui/card';
 
-export default function Sermons() {
+export default function Documentaries() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [sortBy, setSortBy] = useState<'latest' | 'oldest' | 'title'>('latest');
@@ -35,7 +35,7 @@ export default function Sermons() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data, isLoading, error } = useSermons({
+  const { data, isLoading } = useDocumentaries({
     search,
     status,
     sortBy,
@@ -43,15 +43,12 @@ export default function Sermons() {
     perPage: 20,
   });
 
-  // Debug logging
-  console.log('📊 Sermons Page Data:', { data, isLoading, error });
-
-  const deleteSermon = useDeleteSermon();
-  const bulkDelete = useBulkDeleteSermons();
+  const deleteDocumentary = useDeleteDocumentary();
+  const bulkDelete = useBulkDeleteDocumentaries();
 
   const handleDelete = async () => {
     if (deleteId) {
-      await deleteSermon.mutateAsync(deleteId);
+      await deleteDocumentary.mutateAsync(deleteId);
       setDeleteId(null);
     }
   };
@@ -70,10 +67,10 @@ export default function Sermons() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === data?.sermons.length) {
+    if (selectedIds.length === data?.documentaries.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(data?.sermons.map((s) => s.id) || []);
+      setSelectedIds(data?.documentaries.map((d) => d.id) || []);
     }
   };
 
@@ -81,13 +78,13 @@ export default function Sermons() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Sermons</h1>
-          <p className="text-muted-foreground">Manage sermon videos and content</p>
+          <h1 className="text-3xl font-bold">Documentaries</h1>
+          <p className="text-muted-foreground">Manage documentary videos and content</p>
         </div>
-        <Link to="/sermons/new">
+        <Link to="/documentaries/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Upload Sermon
+            Upload Documentary
           </Button>
         </Link>
       </div>
@@ -97,7 +94,7 @@ export default function Sermons() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by title or speaker..."
+              placeholder="Search by title..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -143,26 +140,14 @@ export default function Sermons() {
           </div>
         )}
 
-        {error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive font-semibold">Error loading sermons</p>
-            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
-            <p className="text-xs text-muted-foreground mt-4">Check the browser console for details</p>
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading sermons...</p>
+            <p className="mt-2 text-sm text-muted-foreground">Loading documentaries...</p>
           </div>
-        ) : !data?.sermons.length ? (
+        ) : !data?.documentaries.length ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No sermons found</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Total in database: {data?.total || 0}
-            </p>
-            <Link to="/sermons/new" className="mt-4 inline-block">
-              <Button>Upload Your First Sermon</Button>
-            </Link>
+            <p className="text-muted-foreground">No documentaries found</p>
           </div>
         ) : (
           <div className="rounded-md border">
@@ -171,13 +156,12 @@ export default function Sermons() {
                 <TableRow>
                   <TableHead className="w-[50px]">
                     <Checkbox
-                      checked={selectedIds.length === data.sermons.length}
+                      checked={selectedIds.length === data.documentaries.length}
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
                   <TableHead className="w-[100px]">Thumbnail</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Speaker</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
@@ -185,35 +169,34 @@ export default function Sermons() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.sermons.map((sermon) => (
-                  <TableRow key={sermon.id}>
+                {data.documentaries.map((documentary) => (
+                  <TableRow key={documentary.id}>
                     <TableCell>
                       <Checkbox
-                        checked={selectedIds.includes(sermon.id)}
-                        onCheckedChange={() => toggleSelect(sermon.id)}
+                        checked={selectedIds.includes(documentary.id)}
+                        onCheckedChange={() => toggleSelect(documentary.id)}
                       />
                     </TableCell>
                     <TableCell>
                       <img
-                        src={sermon.thumbnail_url}
-                        alt={sermon.title}
+                        src={documentary.thumbnail_url}
+                        alt={documentary.title}
                         className="w-16 h-10 object-cover rounded"
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{sermon.title}</TableCell>
-                    <TableCell>{sermon.speaker}</TableCell>
-                    <TableCell>{sermon.duration} min</TableCell>
+                    <TableCell className="font-medium">{documentary.title}</TableCell>
+                    <TableCell>{documentary.duration} min</TableCell>
                     <TableCell>
-                      <Badge variant={sermon.status === 'published' ? 'default' : 'secondary'}>
-                        {sermon.status}
+                      <Badge variant={documentary.status === 'published' ? 'default' : 'secondary'}>
+                        {documentary.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {new Date(sermon.created_at).toLocaleDateString()}
+                      {new Date(documentary.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link to={`/sermons/${sermon.id}`}>
+                        <Link to={`/documentaries/${documentary.id}/edit`}>
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -221,7 +204,7 @@ export default function Sermons() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setDeleteId(sermon.id)}
+                          onClick={() => setDeleteId(documentary.id)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -238,9 +221,9 @@ export default function Sermons() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sermon?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Documentary?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the sermon and all associated files. This action cannot be undone.
+              This will permanently delete the documentary and all associated files. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

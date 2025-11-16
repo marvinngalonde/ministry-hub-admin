@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Filter, Trash2, Eye } from 'lucide-react';
-import { useSermons, useDeleteSermon, useBulkDeleteSermons } from '@/hooks/useSermons';
+import { usePresentations, useDeletePresentation, useBulkDeletePresentations } from '@/hooks/usePresentations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,31 +27,30 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Card } from '@/components/ui/card';
 
-export default function Sermons() {
+export default function Presentations() {
   const [search, setSearch] = useState('');
+  const [type, setType] = useState<string>('all');
   const [status, setStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [sortBy, setSortBy] = useState<'latest' | 'oldest' | 'title'>('latest');
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data, isLoading, error } = useSermons({
+  const { data, isLoading } = usePresentations({
     search,
+    type,
     status,
     sortBy,
     page,
     perPage: 20,
   });
 
-  // Debug logging
-  console.log('📊 Sermons Page Data:', { data, isLoading, error });
-
-  const deleteSermon = useDeleteSermon();
-  const bulkDelete = useBulkDeleteSermons();
+  const deletePresentation = useDeletePresentation();
+  const bulkDelete = useBulkDeletePresentations();
 
   const handleDelete = async () => {
     if (deleteId) {
-      await deleteSermon.mutateAsync(deleteId);
+      await deletePresentation.mutateAsync(deleteId);
       setDeleteId(null);
     }
   };
@@ -70,24 +69,34 @@ export default function Sermons() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === data?.sermons.length) {
+    if (selectedIds.length === data?.presentations.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(data?.sermons.map((s) => s.id) || []);
+      setSelectedIds(data?.presentations.map((p) => p.id) || []);
     }
+  };
+
+  const getTypeLabel = (type: string) => {
+    const types: Record<string, string> = {
+      podcast: 'Podcast',
+      family_foundations: 'Family Foundations',
+      spiritual_health: 'Spiritual Health',
+      bible_studies: 'Bible Studies',
+    };
+    return types[type] || type;
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Sermons</h1>
-          <p className="text-muted-foreground">Manage sermon videos and content</p>
+          <h1 className="text-3xl font-bold">Presentations</h1>
+          <p className="text-muted-foreground">Manage presentations and teaching content</p>
         </div>
-        <Link to="/sermons/new">
+        <Link to="/presentations/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Upload Sermon
+            Upload Presentation
           </Button>
         </Link>
       </div>
@@ -103,6 +112,19 @@ export default function Sermons() {
               className="pl-9"
             />
           </div>
+          <Select value={type} onValueChange={setType}>
+            <SelectTrigger className="w-full sm:w-[200px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="podcast">Podcast</SelectItem>
+              <SelectItem value="family_foundations">Family Foundations</SelectItem>
+              <SelectItem value="spiritual_health">Spiritual Health</SelectItem>
+              <SelectItem value="bible_studies">Bible Studies</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={status} onValueChange={(v: any) => setStatus(v)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
@@ -143,26 +165,14 @@ export default function Sermons() {
           </div>
         )}
 
-        {error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive font-semibold">Error loading sermons</p>
-            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
-            <p className="text-xs text-muted-foreground mt-4">Check the browser console for details</p>
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading sermons...</p>
+            <p className="mt-2 text-sm text-muted-foreground">Loading presentations...</p>
           </div>
-        ) : !data?.sermons.length ? (
+        ) : !data?.presentations.length ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No sermons found</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Total in database: {data?.total || 0}
-            </p>
-            <Link to="/sermons/new" className="mt-4 inline-block">
-              <Button>Upload Your First Sermon</Button>
-            </Link>
+            <p className="text-muted-foreground">No presentations found</p>
           </div>
         ) : (
           <div className="rounded-md border">
@@ -171,12 +181,13 @@ export default function Sermons() {
                 <TableRow>
                   <TableHead className="w-[50px]">
                     <Checkbox
-                      checked={selectedIds.length === data.sermons.length}
+                      checked={selectedIds.length === data.presentations.length}
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
                   <TableHead className="w-[100px]">Thumbnail</TableHead>
                   <TableHead>Title</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Speaker</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Status</TableHead>
@@ -185,35 +196,38 @@ export default function Sermons() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.sermons.map((sermon) => (
-                  <TableRow key={sermon.id}>
+                {data.presentations.map((presentation) => (
+                  <TableRow key={presentation.id}>
                     <TableCell>
                       <Checkbox
-                        checked={selectedIds.includes(sermon.id)}
-                        onCheckedChange={() => toggleSelect(sermon.id)}
+                        checked={selectedIds.includes(presentation.id)}
+                        onCheckedChange={() => toggleSelect(presentation.id)}
                       />
                     </TableCell>
                     <TableCell>
                       <img
-                        src={sermon.thumbnail_url}
-                        alt={sermon.title}
+                        src={presentation.thumbnail_url}
+                        alt={presentation.title}
                         className="w-16 h-10 object-cover rounded"
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{sermon.title}</TableCell>
-                    <TableCell>{sermon.speaker}</TableCell>
-                    <TableCell>{sermon.duration} min</TableCell>
+                    <TableCell className="font-medium">{presentation.title}</TableCell>
                     <TableCell>
-                      <Badge variant={sermon.status === 'published' ? 'default' : 'secondary'}>
-                        {sermon.status}
+                      <Badge variant="outline">{getTypeLabel(presentation.type)}</Badge>
+                    </TableCell>
+                    <TableCell>{presentation.speaker || 'N/A'}</TableCell>
+                    <TableCell>{presentation.duration} min</TableCell>
+                    <TableCell>
+                      <Badge variant={presentation.status === 'published' ? 'default' : 'secondary'}>
+                        {presentation.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {new Date(sermon.created_at).toLocaleDateString()}
+                      {new Date(presentation.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link to={`/sermons/${sermon.id}`}>
+                        <Link to={`/presentations/${presentation.id}/edit`}>
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -221,7 +235,7 @@ export default function Sermons() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setDeleteId(sermon.id)}
+                          onClick={() => setDeleteId(presentation.id)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -238,9 +252,9 @@ export default function Sermons() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sermon?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Presentation?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the sermon and all associated files. This action cannot be undone.
+              This will permanently delete the presentation and all associated files. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

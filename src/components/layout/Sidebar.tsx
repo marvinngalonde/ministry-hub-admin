@@ -22,7 +22,7 @@ const menuItems = [
   { icon: Film, label: "Documentaries", path: "/documentaries" },
   { icon: Presentation, label: "Presentations", path: "/presentations" },
   { icon: BookOpen, label: "Materials", path: "/materials" },
-  { icon: MessageSquare, label: "Community", path: "/community" },
+  { icon: MessageSquare, label: "Community", path: "/community/posts" },
   { icon: Users, label: "Users", path: "/users" },
   { icon: ImageIcon, label: "Media Library", path: "/media" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },

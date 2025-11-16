@@ -1,0 +1,92 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Upload, Trash2, Copy } from 'lucide-react';
+
+export default function MediaLibrary() {
+  const { data: files, isLoading } = useQuery({
+    queryKey: ['media-files'],
+    queryFn: async () => {
+      const buckets = ['sermons', 'documentaries', 'presentations', 'materials', 'community', 'avatars'];
+      const allFiles: any[] = [];
+
+      for (const bucket of buckets) {
+        const { data } = await supabase.storage.from(bucket).list();
+        if (data) {
+          allFiles.push(...data.map(file => ({
+            ...file,
+            bucket,
+            url: supabase.storage.from(bucket).getPublicUrl(file.name).data.publicUrl
+          })));
+        }
+      }
+
+      return allFiles;
+    },
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Media Library</h1>
+          <p className="text-muted-foreground">Manage uploaded files across all buckets</p>
+        </div>
+        <Button>
+          <Upload className="h-4 w-4 mr-2" />
+          Upload Files
+        </Button>
+      </div>
+
+      <Card className="p-6">
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+            <p className="mt-2 text-sm text-muted-foreground">Loading files...</p>
+          </div>
+        ) : !files?.length ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No files found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-4 gap-4">
+            {files.map((file: any, index: number) => (
+              <div key={`${file.bucket}-${file.name}-${index}`} className="border rounded-lg p-4">
+                <div className="aspect-video bg-muted rounded mb-2 flex items-center justify-center overflow-hidden">
+                  {file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                    <img src={file.url} alt={file.name} className="w-full h-full object-cover rounded" />
+                  ) : file.name.match(/\.(mp4|mov|avi)$/i) ? (
+                    <div className="text-4xl">🎬</div>
+                  ) : file.name.match(/\.(pdf|doc|docx)$/i) ? (
+                    <div className="text-4xl">📄</div>
+                  ) : (
+                    <div className="text-4xl">📁</div>
+                  )}
+                </div>
+                <p className="text-sm font-medium truncate" title={file.name}>{file.name}</p>
+                <p className="text-xs text-muted-foreground capitalize">{file.bucket}</p>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      navigator.clipboard.writeText(file.url);
+                      alert('URL copied to clipboard!');
+                    }}
+                    title="Copy URL"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="ghost" title="Delete file">
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}

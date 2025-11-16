@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, Trash2, Eye } from 'lucide-react';
-import { useSermons, useDeleteSermon, useBulkDeleteSermons } from '@/hooks/useSermons';
+import { Plus, Search, Filter, Trash2, Eye, FileText } from 'lucide-react';
+import { useMaterials, useDeleteMaterial, useBulkDeleteMaterials } from '@/hooks/useMaterials';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,31 +27,30 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Card } from '@/components/ui/card';
 
-export default function Sermons() {
+export default function Materials() {
   const [search, setSearch] = useState('');
+  const [type, setType] = useState<string>('all');
   const [status, setStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [sortBy, setSortBy] = useState<'latest' | 'oldest' | 'title'>('latest');
   const [page, setPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data, isLoading, error } = useSermons({
+  const { data, isLoading } = useMaterials({
     search,
+    type,
     status,
     sortBy,
     page,
     perPage: 20,
   });
 
-  // Debug logging
-  console.log('📊 Sermons Page Data:', { data, isLoading, error });
-
-  const deleteSermon = useDeleteSermon();
-  const bulkDelete = useBulkDeleteSermons();
+  const deleteMaterial = useDeleteMaterial();
+  const bulkDelete = useBulkDeleteMaterials();
 
   const handleDelete = async () => {
     if (deleteId) {
-      await deleteSermon.mutateAsync(deleteId);
+      await deleteMaterial.mutateAsync(deleteId);
       setDeleteId(null);
     }
   };
@@ -70,24 +69,33 @@ export default function Sermons() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === data?.sermons.length) {
+    if (selectedIds.length === data?.materials.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(data?.sermons.map((s) => s.id) || []);
+      setSelectedIds(data?.materials.map((m) => m.id) || []);
     }
+  };
+
+  const getTypeLabel = (type: string) => {
+    const types: Record<string, string> = {
+      book: 'Book',
+      article: 'Article',
+      study_guide: 'Study Guide',
+    };
+    return types[type] || type;
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Sermons</h1>
-          <p className="text-muted-foreground">Manage sermon videos and content</p>
+          <h1 className="text-3xl font-bold">Spiritual Materials</h1>
+          <p className="text-muted-foreground">Manage books, articles, and study guides</p>
         </div>
-        <Link to="/sermons/new">
+        <Link to="/materials/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Upload Sermon
+            Upload Material
           </Button>
         </Link>
       </div>
@@ -97,12 +105,24 @@ export default function Sermons() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by title or speaker..."
+              placeholder="Search by title or author..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
             />
           </div>
+          <Select value={type} onValueChange={setType}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="book">Book</SelectItem>
+              <SelectItem value="article">Article</SelectItem>
+              <SelectItem value="study_guide">Study Guide</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={status} onValueChange={(v: any) => setStatus(v)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
@@ -143,26 +163,14 @@ export default function Sermons() {
           </div>
         )}
 
-        {error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive font-semibold">Error loading sermons</p>
-            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
-            <p className="text-xs text-muted-foreground mt-4">Check the browser console for details</p>
-          </div>
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading sermons...</p>
+            <p className="mt-2 text-sm text-muted-foreground">Loading materials...</p>
           </div>
-        ) : !data?.sermons.length ? (
+        ) : !data?.materials.length ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No sermons found</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Total in database: {data?.total || 0}
-            </p>
-            <Link to="/sermons/new" className="mt-4 inline-block">
-              <Button>Upload Your First Sermon</Button>
-            </Link>
+            <p className="text-muted-foreground">No materials found</p>
           </div>
         ) : (
           <div className="rounded-md border">
@@ -171,49 +179,57 @@ export default function Sermons() {
                 <TableRow>
                   <TableHead className="w-[50px]">
                     <Checkbox
-                      checked={selectedIds.length === data.sermons.length}
+                      checked={selectedIds.length === data.materials.length}
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
                   <TableHead className="w-[100px]">Thumbnail</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Speaker</TableHead>
-                  <TableHead>Duration</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Author</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.sermons.map((sermon) => (
-                  <TableRow key={sermon.id}>
+                {data.materials.map((material) => (
+                  <TableRow key={material.id}>
                     <TableCell>
                       <Checkbox
-                        checked={selectedIds.includes(sermon.id)}
-                        onCheckedChange={() => toggleSelect(sermon.id)}
+                        checked={selectedIds.includes(material.id)}
+                        onCheckedChange={() => toggleSelect(material.id)}
                       />
                     </TableCell>
                     <TableCell>
-                      <img
-                        src={sermon.thumbnail_url}
-                        alt={sermon.title}
-                        className="w-16 h-10 object-cover rounded"
-                      />
+                      {material.thumbnail_url ? (
+                        <img
+                          src={material.thumbnail_url}
+                          alt={material.title}
+                          className="w-16 h-10 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-16 h-10 bg-muted rounded flex items-center justify-center">
+                          <FileText className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
                     </TableCell>
-                    <TableCell className="font-medium">{sermon.title}</TableCell>
-                    <TableCell>{sermon.speaker}</TableCell>
-                    <TableCell>{sermon.duration} min</TableCell>
+                    <TableCell className="font-medium">{material.title}</TableCell>
                     <TableCell>
-                      <Badge variant={sermon.status === 'published' ? 'default' : 'secondary'}>
-                        {sermon.status}
+                      <Badge variant="outline">{getTypeLabel(material.type)}</Badge>
+                    </TableCell>
+                    <TableCell>{material.author || 'N/A'}</TableCell>
+                    <TableCell>
+                      <Badge variant={material.status === 'published' ? 'default' : 'secondary'}>
+                        {material.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {new Date(sermon.created_at).toLocaleDateString()}
+                      {new Date(material.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link to={`/sermons/${sermon.id}`}>
+                        <Link to={`/materials/${material.id}/edit`}>
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -221,7 +237,7 @@ export default function Sermons() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setDeleteId(sermon.id)}
+                          onClick={() => setDeleteId(material.id)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -238,9 +254,9 @@ export default function Sermons() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sermon?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Material?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the sermon and all associated files. This action cannot be undone.
+              This will permanently delete the material and all associated files. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

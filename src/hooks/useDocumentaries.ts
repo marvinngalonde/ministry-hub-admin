@@ -87,6 +87,87 @@ export function useCreateDocumentary() {
   });
 }
 
+export function useDocumentary(id: string) {
+  return useQuery({
+    queryKey: ['documentary', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('documentaries')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
+export function useUpdateDocumentary(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (formData: Partial<DocumentaryFormData> & {
+      video_file?: File;
+      thumbnail_file?: File;
+    }) => {
+      const updateData: any = {
+        title: formData.title,
+        description: formData.description,
+        duration: formData.duration,
+        status: formData.status,
+      };
+
+      if (formData.video_file) {
+        const { data: doc } = await supabase
+          .from('documentaries')
+          .select('video_url')
+          .eq('id', id)
+          .single();
+
+        if (doc?.video_url) {
+          await deleteFileFromUrl(doc.video_url, 'documentaries');
+        }
+
+        updateData.video_url = await uploadFile(formData.video_file, 'documentaries', 'videos');
+      }
+
+      if (formData.thumbnail_file) {
+        const { data: doc } = await supabase
+          .from('documentaries')
+          .select('thumbnail_url')
+          .eq('id', id)
+          .single();
+
+        if (doc?.thumbnail_url) {
+          await deleteFileFromUrl(doc.thumbnail_url, 'documentaries');
+        }
+
+        updateData.thumbnail_url = await uploadFile(formData.thumbnail_file, 'documentaries', 'thumbnails');
+      }
+
+      const { data, error } = await supabase
+        .from('documentaries')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documentaries'] });
+      queryClient.invalidateQueries({ queryKey: ['documentary', id] });
+      toast({
+        title: 'Success',
+        description: 'Documentary updated successfully!',
+      });
+    },
+  });
+}
+
 export function useDeleteDocumentary() {
   const queryClient = useQueryClient();
 
@@ -111,6 +192,38 @@ export function useDeleteDocumentary() {
       toast({
         title: 'Success',
         description: 'Documentary deleted successfully',
+      });
+    },
+  });
+}
+
+export function useBulkDeleteDocumentaries() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { data: docs } = await supabase
+        .from('documentaries')
+        .select('id, video_url, thumbnail_url')
+        .in('id', ids);
+
+      const { error } = await supabase.from('documentaries').delete().in('id', ids);
+      if (error) throw error;
+
+      if (docs) {
+        for (const doc of docs) {
+          if (doc.video_url) await deleteFileFromUrl(doc.video_url, 'documentaries');
+          if (doc.thumbnail_url) await deleteFileFromUrl(doc.thumbnail_url, 'documentaries');
+        }
+      }
+
+      return ids;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documentaries'] });
+      toast({
+        title: 'Success',
+        description: 'Documentaries deleted successfully',
       });
     },
   });

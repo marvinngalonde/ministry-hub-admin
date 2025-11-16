@@ -17,20 +17,37 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Mock authentication - in production, this would call your backend
-    setTimeout(() => {
-      if (email && password) {
+    try {
+      // Use Supabase authentication
+      const { supabase } = await import("@/lib/supabase");
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        toast.error(error.message || "Invalid email or password");
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        console.log('✅ Logged in successfully:', data.user.email);
         localStorage.setItem("isAuthenticated", "true");
         if (rememberMe) {
           localStorage.setItem("rememberMe", "true");
         }
         toast.success("Successfully logged in!");
         navigate("/dashboard");
-      } else {
-        toast.error("Please enter valid credentials");
       }
+    } catch (error: any) {
+      console.error('Login exception:', error);
+      toast.error("Login failed. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

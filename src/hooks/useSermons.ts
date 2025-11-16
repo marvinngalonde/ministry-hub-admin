@@ -51,7 +51,19 @@ export function useSermons(filters: SermonFilters) {
       query = query.range(from, to);
 
       const { data, error, count } = await query;
-      if (error) throw error;
+
+      console.log('🔍 Sermons Query Result:', {
+        data,
+        error,
+        count,
+        filters,
+        dataLength: data?.length
+      });
+
+      if (error) {
+        console.error('❌ Sermons Query Error:', error);
+        throw error;
+      }
 
       return { sermons: data || [], total: count || 0 };
     },
