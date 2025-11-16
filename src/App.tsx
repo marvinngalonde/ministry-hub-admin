@@ -7,6 +7,8 @@ import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { ProtectedRoute } from "./lib/auth";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Sermons from "./pages/Sermons";
+import SermonNew from "./pages/SermonNew";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,7 +32,8 @@ const App = () => (
             }
           >
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="sermons" element={<div className="text-2xl">Sermons - Coming Soon</div>} />
+            <Route path="sermons" element={<Sermons />} />
+            <Route path="sermons/new" element={<SermonNew />} />
             <Route path="documentaries" element={<div className="text-2xl">Documentaries - Coming Soon</div>} />
             <Route path="presentations" element={<div className="text-2xl">Presentations - Coming Soon</div>} />
             <Route path="materials" element={<div className="text-2xl">Materials - Coming Soon</div>} />
