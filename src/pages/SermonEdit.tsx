@@ -213,7 +213,7 @@ export default function SermonEdit() {
                 </p>
                 <FileUpload
                   accept="video/*"
-                  maxSize={2 * 1024 * 1024 * 1024} // 2GB
+                  maxSize={10 * 1024 * 1024 * 1024} // 10GB
                   onFileSelect={setVideoFile}
                   label="Upload new video to replace current one"
                 />

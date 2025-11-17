@@ -183,7 +183,7 @@ export default function DocumentaryEdit() {
                 </p>
                 <FileUpload
                   accept="video/*"
-                  maxSize={2 * 1024 * 1024 * 1024}
+                  maxSize={10 * 1024 * 1024 * 1024}
                   onFileSelect={setVideoFile}
                   label="Upload new video to replace current one"
                 />

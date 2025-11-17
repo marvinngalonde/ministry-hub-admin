@@ -128,7 +128,7 @@ export default function SermonNew() {
               <FileUpload
                 onFileSelect={setVideoFile}
                 accept={{ 'video/*': ['.mp4', '.mov', '.avi'] }}
-                maxSize={2 * 1024 * 1024 * 1024} // 2GB
+                maxSize={10 * 1024 * 1024 * 1024} // 10GB
                 label="Drop video here or click to upload"
                 fileType="video"
               />

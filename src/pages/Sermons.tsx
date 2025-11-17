@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Eye, Edit } from 'lucide-react';
 import { useSermons, useDeleteSermon, useBulkDeleteSermons } from '@/hooks/useSermons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -212,16 +212,25 @@ export default function Sermons() {
                       {new Date(sermon.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link to={`/sermons/${sermon.id}`}>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => window.open(sermon.video_url, '_blank')}
+                          title="View Video"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Link to={`/sermons/${sermon.id}/edit`}>
+                          <Button variant="ghost" size="sm" title="Edit">
+                            <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteId(sermon.id)}
+                          title="Delete"
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

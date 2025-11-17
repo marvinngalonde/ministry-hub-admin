@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Search, Trash2 } from 'lucide-react';
+import { Search, Trash2, Filter } from 'lucide-react';
 import { useCommunityPosts, useDeletePost } from '@/hooks/useCommunity';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -25,17 +26,30 @@ import {
 
 export default function CommunityPosts() {
   const [search, setSearch] = useState('');
+  const [postType, setPostType] = useState<'all' | 'group' | 'regular'>('all');
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data, isLoading } = useCommunityPosts({
+  const { data, isLoading, error } = useCommunityPosts({
     search,
     page,
     perPage: 20,
     sortBy: 'latest',
   });
 
+  console.log('📊 Community Posts:', { data, isLoading, error });
+
   const deletePost = useDeletePost();
+
+  // Filter posts by type
+  const filteredPosts = data?.posts.filter((post: any) => {
+    if (postType === 'group') {
+      return post.group_id !== null;
+    } else if (postType === 'regular') {
+      return post.group_id === null;
+    }
+    return true; // 'all'
+  }) || [];
 
   const handleDelete = async () => {
     if (deleteId) {
@@ -52,8 +66,8 @@ export default function CommunityPosts() {
       </div>
 
       <Card className="p-6">
-        <div className="mb-6">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search posts..."
@@ -62,16 +76,37 @@ export default function CommunityPosts() {
               className="pl-9"
             />
           </div>
+          <Select value={postType} onValueChange={(v: any) => setPostType(v)}>
+            <SelectTrigger className="w-full sm:w-[200px]">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Posts</SelectItem>
+              <SelectItem value="group">Group Posts Only</SelectItem>
+              <SelectItem value="regular">Regular Posts Only</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {isLoading ? (
+        {error ? (
+          <div className="text-center py-12">
+            <p className="text-destructive font-semibold">Error loading posts</p>
+            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
+          </div>
+        ) : isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
             <p className="mt-2 text-sm text-muted-foreground">Loading posts...</p>
           </div>
-        ) : !data?.posts.length ? (
+        ) : !filteredPosts.length ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No posts found</p>
+            <p className="text-muted-foreground">
+              {postType === 'all' ? 'No posts found' : `No ${postType} posts found`}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Total posts in database: {data?.posts.length || 0}
+            </p>
           </div>
         ) : (
           <div className="rounded-md border">
@@ -86,7 +121,7 @@ export default function CommunityPosts() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.posts.map((post: any) => (
+                {filteredPosts.map((post: any) => (
                   <TableRow key={post.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
