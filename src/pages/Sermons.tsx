@@ -78,34 +78,34 @@ export default function Sermons() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Sermons</h1>
-          <p className="text-muted-foreground">Manage sermon videos and content</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Sermons</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage sermon videos and content</p>
         </div>
-        <Link to="/sermons/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
+        <Link to="/sermons/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
+            <Plus className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
             Upload Sermon
           </Button>
         </Link>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4 sm:h-4 text-muted-foreground" />
             <Input
               placeholder="Search by title or speaker..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 min-h-[44px]"
             />
           </div>
           <Select value={status} onValueChange={(v: any) => setStatus(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <Filter className="h-4 w-4 mr-2" />
+            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
+              <Filter className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -115,7 +115,7 @@ export default function Sermons() {
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -127,8 +127,8 @@ export default function Sermons() {
         </div>
 
         {selectedIds.length > 0 && (
-          <div className="mb-4 flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <p className="text-sm sm:text-base text-muted-foreground">
               {selectedIds.length} selected
             </p>
             <Button
@@ -136,37 +136,40 @@ export default function Sermons() {
               size="sm"
               onClick={handleBulkDelete}
               disabled={bulkDelete.isPending}
+              className="w-full sm:w-auto min-h-[44px]"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               Delete Selected
             </Button>
           </div>
         )}
 
         {error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive font-semibold">Error loading sermons</p>
-            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-destructive font-semibold">Error loading sermons</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
             <p className="text-xs text-muted-foreground mt-4">Check the browser console for details</p>
           </div>
         ) : isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading sermons...</p>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading sermons...</p>
           </div>
         ) : !data?.sermons.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No sermons found</p>
-            <p className="text-sm text-muted-foreground mt-2">
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">No sermons found</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">
               Total in database: {data?.total || 0}
             </p>
-            <Link to="/sermons/new" className="mt-4 inline-block">
-              <Button>Upload Your First Sermon</Button>
+            <Link to="/sermons/new" className="mt-4 inline-block w-full sm:w-auto">
+              <Button className="w-full sm:w-auto min-h-[44px]">Upload Your First Sermon</Button>
             </Link>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+              <div className="rounded-md border">
+                <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]">
@@ -212,18 +215,19 @@ export default function Sermons() {
                       {new Date(sermon.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => window.open(sermon.video_url, '_blank')}
                           title="View Video"
+                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
                         </Button>
                         <Link to={`/sermons/${sermon.id}/edit`}>
-                          <Button variant="ghost" size="sm" title="Edit">
-                            <Edit className="h-4 w-4" />
+                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
+                            <Edit className="w-4 h-4 sm:w-4 sm:h-4" />
                           </Button>
                         </Link>
                         <Button
@@ -231,8 +235,9 @@ export default function Sermons() {
                           size="sm"
                           onClick={() => setDeleteId(sermon.id)}
                           title="Delete"
+                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
@@ -240,12 +245,14 @@ export default function Sermons() {
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </div>
         )}
       </Card>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 sm:mx-auto max-w-[calc(100%-2rem)] sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Sermon?</AlertDialogTitle>
             <AlertDialogDescription>

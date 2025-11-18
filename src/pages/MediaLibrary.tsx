@@ -27,30 +27,30 @@ export default function MediaLibrary() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Media Library</h1>
-          <p className="text-muted-foreground">Manage uploaded files across all buckets</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Media Library</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage uploaded files across all buckets</p>
         </div>
-        <Button>
-          <Upload className="h-4 w-4 mr-2" />
+        <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
+          <Upload className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
           Upload Files
         </Button>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         {isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading files...</p>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading files...</p>
           </div>
         ) : !files?.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No files found</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">No files found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
             {files.map((file: any, index: number) => (
               <div key={`${file.bucket}-${file.name}-${index}`} className="border rounded-lg p-4">
                 <div className="aspect-video bg-muted rounded mb-2 flex items-center justify-center overflow-hidden">

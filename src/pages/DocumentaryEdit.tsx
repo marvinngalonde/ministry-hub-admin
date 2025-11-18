@@ -93,7 +93,7 @@ export default function DocumentaryEdit() {
   if (!documentary) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Documentary not found</p>
+        <p className="text-sm sm:text-base text-muted-foreground">Documentary not found</p>
         <Link to="/documentaries">
           <Button className="mt-4">Back to Documentaries</Button>
         </Link>
@@ -102,25 +102,25 @@ export default function DocumentaryEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/documentaries">
           <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="w-4 h-4 sm:w-4 sm:h-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Documentary</h1>
-          <p className="text-muted-foreground">Update documentary details and media</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Documentary</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update documentary details and media</p>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -174,13 +174,13 @@ export default function DocumentaryEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Media Files</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
               <div>
                 <Label>Video File</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {documentary.video_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
@@ -193,7 +193,7 @@ export default function DocumentaryEdit() {
 
               <div>
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {documentary.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {documentary.thumbnail_url && !thumbnailFile && (
@@ -213,8 +213,8 @@ export default function DocumentaryEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Publishing Options</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Publishing Options</h2>
 
             <FormField
               control={form.control}
@@ -241,7 +241,7 @@ export default function DocumentaryEdit() {
 
           <UploadProgress progress={uploadProgress} show={updateDocumentary.isPending} />
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <Link to="/documentaries">
               <Button type="button" variant="outline" disabled={updateDocumentary.isPending}>
                 Cancel
@@ -249,7 +249,7 @@ export default function DocumentaryEdit() {
             </Link>
             <Button type="submit" disabled={updateDocumentary.isPending}>
               {updateDocumentary.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 w-4 h-4 sm:w-4 sm:h-4 animate-spin" />
               )}
               Update Documentary
             </Button>

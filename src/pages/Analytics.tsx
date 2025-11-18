@@ -36,21 +36,21 @@ export default function Analytics() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
       <div>
-        <h1 className="text-3xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">Overview of your ministry's content and community</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Analytics</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Overview of your ministry's content and community</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900 rounded-lg flex-shrink-0">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Total Sermons</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalSermons || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Total Sermons</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalSermons || 0}</p>
             </div>
           </div>
         </Card>

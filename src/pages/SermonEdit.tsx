@@ -102,25 +102,25 @@ export default function SermonEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/sermons">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Sermon</h1>
-          <p className="text-muted-foreground">Update sermon details and media</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Sermon</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update sermon details and media</p>
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -167,7 +167,7 @@ export default function SermonEdit() {
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <FormField
                   control={form.control}
                   name="duration"
@@ -204,10 +204,10 @@ export default function SermonEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Media Files</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
                 <Label>Video File</Label>
                 <p className="text-sm text-muted-foreground mb-2">
@@ -243,10 +243,10 @@ export default function SermonEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Publishing Options</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Publishing Options</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="status"
@@ -294,15 +294,15 @@ export default function SermonEdit() {
 
           <UploadProgress progress={uploadProgress} show={updateSermon.isPending} />
 
-          <div className="flex justify-end gap-4">
-            <Link to="/sermons">
-              <Button type="button" variant="outline" disabled={updateSermon.isPending}>
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+            <Link to="/sermons" className="w-full sm:w-auto">
+              <Button type="button" variant="outline" disabled={updateSermon.isPending} className="w-full sm:w-auto min-h-[44px]">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={updateSermon.isPending}>
+            <Button type="submit" disabled={updateSermon.isPending} className="w-full sm:w-auto min-h-[44px]">
               {updateSermon.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 w-4 h-4 sm:w-4 sm:h-4 animate-spin" />
               )}
               Update Sermon
             </Button>

@@ -96,7 +96,7 @@ export default function MaterialEdit() {
   if (!material) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Material not found</p>
+        <p className="text-sm sm:text-base text-muted-foreground">Material not found</p>
         <Link to="/materials">
           <Button className="mt-4">Back to Materials</Button>
         </Link>
@@ -105,25 +105,25 @@ export default function MaterialEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/materials">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Material</h1>
-          <p className="text-muted-foreground">Update material details and files</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Material</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update material details and files</p>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -195,13 +195,13 @@ export default function MaterialEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Files</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Files</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
               <div>
                 <Label>Document File</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {material.content_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
@@ -214,7 +214,7 @@ export default function MaterialEdit() {
 
               <div>
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {material.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {material.thumbnail_url && !thumbnailFile && (
@@ -234,8 +234,8 @@ export default function MaterialEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Publishing Options</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Publishing Options</h2>
 
             <FormField
               control={form.control}
@@ -262,7 +262,7 @@ export default function MaterialEdit() {
 
           <UploadProgress progress={uploadProgress} show={updateMaterial.isPending} />
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <Link to="/materials">
               <Button type="button" variant="outline" disabled={updateMaterial.isPending}>
                 Cancel

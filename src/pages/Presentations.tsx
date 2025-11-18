@@ -87,34 +87,34 @@ export default function Presentations() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Presentations</h1>
-          <p className="text-muted-foreground">Manage presentations and teaching content</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Presentations</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage presentations and teaching content</p>
         </div>
-        <Link to="/presentations/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
+        <Link to="/presentations/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
+            <Plus className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
             Upload Presentation
           </Button>
         </Link>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4 sm:h-4 text-muted-foreground" />
             <Input
               placeholder="Search by title or speaker..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 min-h-[44px]"
             />
           </div>
           <Select value={type} onValueChange={setType}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <Filter className="h-4 w-4 mr-2" />
+            <SelectTrigger className="w-full sm:w-[200px] min-h-[44px]">
+              <Filter className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -126,8 +126,8 @@ export default function Presentations() {
             </SelectContent>
           </Select>
           <Select value={status} onValueChange={(v: any) => setStatus(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <Filter className="h-4 w-4 mr-2" />
+            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
+              <Filter className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -137,7 +137,7 @@ export default function Presentations() {
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -149,8 +149,8 @@ export default function Presentations() {
         </div>
 
         {selectedIds.length > 0 && (
-          <div className="mb-4 flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <p className="text-sm sm:text-base text-muted-foreground">
               {selectedIds.length} selected
             </p>
             <Button
@@ -158,25 +158,28 @@ export default function Presentations() {
               size="sm"
               onClick={handleBulkDelete}
               disabled={bulkDelete.isPending}
+              className="w-full sm:w-auto min-h-[44px]"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               Delete Selected
             </Button>
           </div>
         )}
 
         {isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading presentations...</p>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading presentations...</p>
           </div>
         ) : !data?.presentations.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No presentations found</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">No presentations found</p>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+              <div className="rounded-md border">
+                <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]">
@@ -226,18 +229,19 @@ export default function Presentations() {
                       {new Date(presentation.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Link to={`/presentations/${presentation.id}/edit`}>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
+                          <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
+                            <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteId(presentation.id)}
+                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
@@ -245,12 +249,14 @@ export default function Presentations() {
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </div>
         )}
       </Card>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 sm:mx-auto max-w-[calc(100%-2rem)] sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Presentation?</AlertDialogTitle>
             <AlertDialogDescription>

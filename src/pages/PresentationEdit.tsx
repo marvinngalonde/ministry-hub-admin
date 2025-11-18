@@ -99,7 +99,7 @@ export default function PresentationEdit() {
   if (!presentation) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Presentation not found</p>
+        <p className="text-sm sm:text-base text-muted-foreground">Presentation not found</p>
         <Link to="/presentations">
           <Button className="mt-4">Back to Presentations</Button>
         </Link>
@@ -108,25 +108,25 @@ export default function PresentationEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/presentations">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Presentation</h1>
-          <p className="text-muted-foreground">Update presentation details and media</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Presentation</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update presentation details and media</p>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -218,13 +218,13 @@ export default function PresentationEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Media Files</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
               <div>
                 <Label>Video File</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {presentation.video_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
@@ -237,7 +237,7 @@ export default function PresentationEdit() {
 
               <div>
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
                   Current: {presentation.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {presentation.thumbnail_url && !thumbnailFile && (
@@ -257,8 +257,8 @@ export default function PresentationEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Publishing Options</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Publishing Options</h2>
 
             <FormField
               control={form.control}
@@ -285,7 +285,7 @@ export default function PresentationEdit() {
 
           <UploadProgress progress={uploadProgress} show={updatePresentation.isPending} />
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <Link to="/presentations">
               <Button type="button" variant="outline" disabled={updatePresentation.isPending}>
                 Cancel

@@ -59,26 +59,26 @@ export default function CommunityPosts() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
       <div>
-        <h1 className="text-3xl font-bold">Community Posts</h1>
-        <p className="text-muted-foreground">Manage user posts and moderation</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Community Posts</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Manage user posts and moderation</p>
       </div>
 
-      <Card className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4 sm:h-4 text-muted-foreground" />
             <Input
               placeholder="Search posts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 min-h-[44px]"
             />
           </div>
           <Select value={postType} onValueChange={(v: any) => setPostType(v)}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <Filter className="h-4 w-4 mr-2" />
+            <SelectTrigger className="w-full sm:w-[200px] min-h-[44px]">
+              <Filter className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -90,27 +90,29 @@ export default function CommunityPosts() {
         </div>
 
         {error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive font-semibold">Error loading posts</p>
-            <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-destructive font-semibold">Error loading posts</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
           </div>
         ) : isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading posts...</p>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading posts...</p>
           </div>
         ) : !filteredPosts.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">
               {postType === 'all' ? 'No posts found' : `No ${postType} posts found`}
             </p>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-2">
               Total posts in database: {data?.posts.length || 0}
             </p>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+              <div className="rounded-md border">
+                <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>User</TableHead>
@@ -158,20 +160,23 @@ export default function CommunityPosts() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeleteId(post.id)}
+                        className="h-9 w-9 sm:h-9 sm:w-9 p-0"
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </div>
         )}
       </Card>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 sm:mx-auto max-w-[calc(100%-2rem)] sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Post?</AlertDialogTitle>
             <AlertDialogDescription>

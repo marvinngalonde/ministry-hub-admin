@@ -35,30 +35,33 @@ export default function CommunityGroups() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Community Groups</h1>
-          <p className="text-muted-foreground">Manage community groups</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Community Groups</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage community groups</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
+          <Plus className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
           Create Group
         </Button>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         {isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading groups...</p>
           </div>
         ) : !groups?.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No groups found</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">No groups found</p>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+              <div className="rounded-md border">
+                <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Image</TableHead>
@@ -90,20 +93,23 @@ export default function CommunityGroups() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeleteId(group.id)}
+                        className="h-9 w-9 sm:h-9 sm:w-9 p-0"
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </div>
         )}
       </Card>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 sm:mx-auto max-w-[calc(100%-2rem)] sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Group?</AlertDialogTitle>
             <AlertDialogDescription>
