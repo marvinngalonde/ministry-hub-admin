@@ -50,7 +50,7 @@ export function useDocumentaries(filters: DocumentaryFilters) {
   });
 }
 
-export function useCreateDocumentary() {
+export function useCreateDocumentary(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -58,8 +58,34 @@ export function useCreateDocumentary() {
       video_file: File;
       thumbnail_file: File;
     }) => {
-      const videoUrl = await uploadFile(formData.video_file, 'documentaries', 'videos');
-      const thumbnailUrl = await uploadFile(formData.thumbnail_file, 'documentaries', 'thumbnails');
+      let videoProgress = 0;
+      let thumbnailProgress = 0;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
+
+      // Upload video
+      const videoUrl = await uploadFile(
+        formData.video_file,
+        'documentaries',
+        'videos',
+        (progress) => {
+          videoProgress = progress;
+          updateProgress();
+        }
+      );
+
+      // Upload thumbnail
+      const thumbnailUrl = await uploadFile(
+        formData.thumbnail_file,
+        'documentaries',
+        'thumbnails',
+        (progress) => {
+          thumbnailProgress = progress;
+          updateProgress();
+        }
+      );
 
       const { data, error } = await supabase
         .from('documentaries')
@@ -104,7 +130,7 @@ export function useDocumentary(id: string) {
   });
 }
 
-export function useUpdateDocumentary(id: string) {
+export function useUpdateDocumentary(id: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -112,6 +138,13 @@ export function useUpdateDocumentary(id: string) {
       video_file?: File;
       thumbnail_file?: File;
     }) => {
+      let videoProgress = 100;
+      let thumbnailProgress = 100;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
+
       const updateData: any = {
         title: formData.title,
         description: formData.description,
@@ -120,6 +153,7 @@ export function useUpdateDocumentary(id: string) {
       };
 
       if (formData.video_file) {
+        videoProgress = 0;
         const { data: doc } = await supabase
           .from('documentaries')
           .select('video_url')
@@ -130,10 +164,19 @@ export function useUpdateDocumentary(id: string) {
           await deleteFileFromUrl(doc.video_url, 'documentaries');
         }
 
-        updateData.video_url = await uploadFile(formData.video_file, 'documentaries', 'videos');
+        updateData.video_url = await uploadFile(
+          formData.video_file,
+          'documentaries',
+          'videos',
+          (progress) => {
+            videoProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       if (formData.thumbnail_file) {
+        thumbnailProgress = 0;
         const { data: doc } = await supabase
           .from('documentaries')
           .select('thumbnail_url')
@@ -144,7 +187,15 @@ export function useUpdateDocumentary(id: string) {
           await deleteFileFromUrl(doc.thumbnail_url, 'documentaries');
         }
 
-        updateData.thumbnail_url = await uploadFile(formData.thumbnail_file, 'documentaries', 'thumbnails');
+        updateData.thumbnail_url = await uploadFile(
+          formData.thumbnail_file,
+          'documentaries',
+          'thumbnails',
+          (progress) => {
+            thumbnailProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       const { data, error } = await supabase

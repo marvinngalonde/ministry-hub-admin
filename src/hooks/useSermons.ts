@@ -87,19 +87,42 @@ export function useSermon(id: string) {
   });
 }
 
-export function useCreateSermon() {
+export function useCreateSermon(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (formData: SermonFormData & { 
-      video_file: File; 
+    mutationFn: async (formData: SermonFormData & {
+      video_file: File;
       thumbnail_file: File;
     }) => {
+      let videoProgress = 0;
+      let thumbnailProgress = 0;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
+
       // Upload video
-      const videoUrl = await uploadFile(formData.video_file, 'sermons', 'videos');
+      const videoUrl = await uploadFile(
+        formData.video_file,
+        'sermons',
+        'videos',
+        (progress) => {
+          videoProgress = progress;
+          updateProgress();
+        }
+      );
 
       // Upload thumbnail
-      const thumbnailUrl = await uploadFile(formData.thumbnail_file, 'sermons', 'thumbnails');
+      const thumbnailUrl = await uploadFile(
+        formData.thumbnail_file,
+        'sermons',
+        'thumbnails',
+        (progress) => {
+          thumbnailProgress = progress;
+          updateProgress();
+        }
+      );
 
       // Insert sermon
       const { data, error } = await supabase
@@ -139,7 +162,7 @@ export function useCreateSermon() {
   });
 }
 
-export function useUpdateSermon(sermonId: string) {
+export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -149,15 +172,39 @@ export function useUpdateSermon(sermonId: string) {
     }) => {
       let videoUrl: string | undefined;
       let thumbnailUrl: string | undefined;
+      let videoProgress = 100;
+      let thumbnailProgress = 100;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
 
       // Upload new video if provided
       if (formData.video_file) {
-        videoUrl = await uploadFile(formData.video_file, 'sermons', 'videos');
+        videoProgress = 0;
+        videoUrl = await uploadFile(
+          formData.video_file,
+          'sermons',
+          'videos',
+          (progress) => {
+            videoProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       // Upload new thumbnail if provided
       if (formData.thumbnail_file) {
-        thumbnailUrl = await uploadFile(formData.thumbnail_file, 'sermons', 'thumbnails');
+        thumbnailProgress = 0;
+        thumbnailUrl = await uploadFile(
+          formData.thumbnail_file,
+          'sermons',
+          'thumbnails',
+          (progress) => {
+            thumbnailProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       // Update sermon

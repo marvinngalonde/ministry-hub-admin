@@ -13,6 +13,7 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -33,7 +34,8 @@ export default function SermonEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: sermon, isLoading } = useSermon(id!);
-  const updateSermon = useUpdateSermon(id!);
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const updateSermon = useUpdateSermon(id!, setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -290,9 +292,11 @@ export default function SermonEdit() {
             </div>
           </Card>
 
+          <UploadProgress progress={uploadProgress} show={updateSermon.isPending} />
+
           <div className="flex justify-end gap-4">
             <Link to="/sermons">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={updateSermon.isPending}>
                 Cancel
               </Button>
             </Link>

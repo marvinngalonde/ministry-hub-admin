@@ -11,6 +11,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -42,7 +43,8 @@ export default function PresentationEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: presentation, isLoading } = usePresentation(id!);
-  const updatePresentation = useUpdatePresentation(id!);
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const updatePresentation = useUpdatePresentation(id!, setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -281,9 +283,11 @@ export default function PresentationEdit() {
             />
           </Card>
 
+          <UploadProgress progress={uploadProgress} show={updatePresentation.isPending} />
+
           <div className="flex justify-end gap-4">
             <Link to="/presentations">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={updatePresentation.isPending}>
                 Cancel
               </Button>
             </Link>

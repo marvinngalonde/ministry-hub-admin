@@ -16,10 +16,21 @@ export function useCommunityPosts(filters: PostFilters) {
   return useQuery({
     queryKey: ['community-posts', filters],
     queryFn: async () => {
-      // First get posts
+      // Try using foreign key relationships first
       let query = supabase
         .from('community_posts')
-        .select('*', { count: 'exact' });
+        .select(`
+          *,
+          user_profiles:community_posts_author_id_fkey (
+            id,
+            full_name,
+            avatar_url
+          ),
+          community_groups:community_posts_group_id_fkey (
+            id,
+            name
+          )
+        `, { count: 'exact' });
 
       if (filters.search) {
         query = query.ilike('content', `%${filters.search}%`);
@@ -29,9 +40,9 @@ export function useCommunityPosts(filters: PostFilters) {
         query = query.eq('group_id', filters.groupId);
       }
 
-      if (filters.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
-      }
+      // Note: status column doesn't exist in community_posts table
+      // The table uses is_published (boolean) instead
+      // Removed: if (filters.status && filters.status !== 'all') { query = query.eq('status', filters.status); }
 
       query = query.order('created_at', { ascending: false });
 
@@ -39,47 +50,71 @@ export function useCommunityPosts(filters: PostFilters) {
       const to = from + filters.perPage - 1;
       query = query.range(from, to);
 
-      const { data: posts, error, count } = await query;
+      const { data, error, count } = await query;
 
-      console.log('🔍 Community Posts Query Result:', { posts, error, count });
+      console.log('🔍 Community Posts Query Result:', { data, error, count });
 
+      // If foreign key query fails, fallback to separate queries
       if (error) {
-        console.error('❌ Community Posts Error:', error);
-        throw error;
+        console.warn('Foreign key query failed, using fallback method:', error);
+
+        // Fallback: fetch separately
+        let fallbackQuery = supabase
+          .from('community_posts')
+          .select('*', { count: 'exact' });
+
+        if (filters.search) {
+          fallbackQuery = fallbackQuery.ilike('content', `%${filters.search}%`);
+        }
+
+        if (filters.groupId) {
+          fallbackQuery = fallbackQuery.eq('group_id', filters.groupId);
+        }
+
+        // Note: status column doesn't exist in community_posts table
+        // Removed: if (filters.status && filters.status !== 'all') { fallbackQuery = fallbackQuery.eq('status', filters.status); }
+
+        fallbackQuery = fallbackQuery.order('created_at', { ascending: false });
+        fallbackQuery = fallbackQuery.range(from, to);
+
+        const { data: posts, error: fallbackError, count: fallbackCount } = await fallbackQuery;
+
+        if (fallbackError) throw fallbackError;
+
+        if (!posts || posts.length === 0) {
+          return { posts: [], total: fallbackCount || 0 };
+        }
+
+        // Get unique author IDs and group IDs
+        const authorIds = [...new Set(posts.map(p => p.author_id).filter(Boolean))];
+        const groupIds = [...new Set(posts.map(p => p.group_id).filter(Boolean))];
+
+        // Fetch user profiles
+        const { data: users } = await supabase
+          .from('user_profiles')
+          .select('id, full_name, avatar_url')
+          .in('id', authorIds);
+
+        // Fetch groups
+        const { data: groups } = groupIds.length > 0
+          ? await supabase
+              .from('community_groups')
+              .select('id, name')
+              .in('id', groupIds)
+          : { data: [] };
+
+        // Combine data
+        const enrichedPosts = posts.map(post => ({
+          ...post,
+          user_profiles: users?.find(u => u.id === post.author_id) || null,
+          community_groups: groups?.find(g => g.id === post.group_id) || null,
+        }));
+
+        return { posts: enrichedPosts, total: fallbackCount || 0 };
       }
 
-      if (!posts || posts.length === 0) {
-        return { posts: [], total: count || 0 };
-      }
-
-      // Get unique user IDs and group IDs
-      const userIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
-      const groupIds = [...new Set(posts.map(p => p.group_id).filter(Boolean))];
-
-      // Fetch user profiles
-      const { data: users } = await supabase
-        .from('user_profiles')
-        .select('id, full_name, avatar_url')
-        .in('id', userIds);
-
-      // Fetch groups
-      const { data: groups } = groupIds.length > 0
-        ? await supabase
-            .from('community_groups')
-            .select('id, name')
-            .in('id', groupIds)
-        : { data: [] };
-
-      // Combine data
-      const enrichedPosts = posts.map(post => ({
-        ...post,
-        user_profiles: users?.find(u => u.id === post.user_id) || null,
-        community_groups: groups?.find(g => g.id === post.group_id) || null,
-      }));
-
-      console.log('✅ Enriched Posts:', enrichedPosts);
-
-      return { posts: enrichedPosts, total: count || 0 };
+      console.log('✅ Posts loaded with relationships:', data);
+      return { posts: data || [], total: count || 0 };
     },
   });
 }
@@ -107,34 +142,50 @@ export function useCommunityGroups() {
   return useQuery({
     queryKey: ['community-groups'],
     queryFn: async () => {
-      // Get groups
-      const { data: groups, error } = await supabase
+      // Try using foreign key relationship first
+      const { data, error } = await supabase
         .from('community_groups')
-        .select('*')
+        .select(`
+          *,
+          user_profiles:community_groups_created_by_fkey (
+            id,
+            full_name
+          )
+        `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      // If foreign key query fails, fallback to separate queries
+      if (error) {
+        console.warn('Foreign key query failed for groups, using fallback:', error);
 
-      if (!groups || groups.length === 0) {
-        return [];
+        const { data: groups, error: fallbackError } = await supabase
+          .from('community_groups')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (fallbackError) throw fallbackError;
+
+        if (!groups || groups.length === 0) {
+          return [];
+        }
+
+        // Get unique creator IDs
+        const creatorIds = [...new Set(groups.map(g => g.created_by).filter(Boolean))];
+
+        // Fetch creators
+        const { data: creators } = await supabase
+          .from('user_profiles')
+          .select('id, full_name')
+          .in('id', creatorIds);
+
+        // Combine data
+        return groups.map(group => ({
+          ...group,
+          user_profiles: creators?.find(c => c.id === group.created_by) || null,
+        }));
       }
 
-      // Get unique creator IDs
-      const creatorIds = [...new Set(groups.map(g => g.created_by).filter(Boolean))];
-
-      // Fetch creators
-      const { data: creators } = await supabase
-        .from('user_profiles')
-        .select('id, full_name')
-        .in('id', creatorIds);
-
-      // Combine data
-      const enrichedGroups = groups.map(group => ({
-        ...group,
-        user_profiles: creators?.find(c => c.id === group.created_by) || null,
-      }));
-
-      return enrichedGroups;
+      return data || [];
     },
   });
 }

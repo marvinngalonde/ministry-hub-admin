@@ -11,6 +11,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -38,7 +39,8 @@ type DocumentaryFormData = z.infer<typeof documentarySchema>;
 
 export default function DocumentaryNew() {
   const navigate = useNavigate();
-  const createDocumentary = useCreateDocumentary();
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const createDocumentary = useCreateDocumentary(setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -208,9 +210,11 @@ export default function DocumentaryNew() {
             />
           </Card>
 
+          <UploadProgress progress={uploadProgress} show={createDocumentary.isPending} />
+
           <div className="flex justify-end gap-4">
             <Link to="/documentaries">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={createDocumentary.isPending}>
                 Cancel
               </Button>
             </Link>

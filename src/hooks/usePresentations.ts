@@ -82,7 +82,7 @@ export function usePresentation(id: string) {
   });
 }
 
-export function useCreatePresentation() {
+export function useCreatePresentation(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -90,8 +90,34 @@ export function useCreatePresentation() {
       video_file: File;
       thumbnail_file: File;
     }) => {
-      const videoUrl = await uploadFile(formData.video_file, 'presentations', 'videos');
-      const thumbnailUrl = await uploadFile(formData.thumbnail_file, 'presentations', 'thumbnails');
+      let videoProgress = 0;
+      let thumbnailProgress = 0;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
+
+      // Upload video
+      const videoUrl = await uploadFile(
+        formData.video_file,
+        'presentations',
+        'videos',
+        (progress) => {
+          videoProgress = progress;
+          updateProgress();
+        }
+      );
+
+      // Upload thumbnail
+      const thumbnailUrl = await uploadFile(
+        formData.thumbnail_file,
+        'presentations',
+        'thumbnails',
+        (progress) => {
+          thumbnailProgress = progress;
+          updateProgress();
+        }
+      );
 
       const { data, error } = await supabase
         .from('presentations')
@@ -129,7 +155,7 @@ export function useCreatePresentation() {
   });
 }
 
-export function useUpdatePresentation(id: string) {
+export function useUpdatePresentation(id: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -139,13 +165,37 @@ export function useUpdatePresentation(id: string) {
     }) => {
       let videoUrl: string | undefined;
       let thumbnailUrl: string | undefined;
+      let videoProgress = 100;
+      let thumbnailProgress = 100;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+      };
 
       if (formData.video_file) {
-        videoUrl = await uploadFile(formData.video_file, 'presentations', 'videos');
+        videoProgress = 0;
+        videoUrl = await uploadFile(
+          formData.video_file,
+          'presentations',
+          'videos',
+          (progress) => {
+            videoProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       if (formData.thumbnail_file) {
-        thumbnailUrl = await uploadFile(formData.thumbnail_file, 'presentations', 'thumbnails');
+        thumbnailProgress = 0;
+        thumbnailUrl = await uploadFile(
+          formData.thumbnail_file,
+          'presentations',
+          'thumbnails',
+          (progress) => {
+            thumbnailProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       const updateData: any = {

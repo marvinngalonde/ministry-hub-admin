@@ -11,6 +11,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -40,7 +41,8 @@ type PresentationFormData = z.infer<typeof presentationSchema>;
 
 export default function PresentationNew() {
   const navigate = useNavigate();
-  const createPresentation = useCreatePresentation();
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const createPresentation = useCreatePresentation(setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -250,9 +252,11 @@ export default function PresentationNew() {
             />
           </Card>
 
+          <UploadProgress progress={uploadProgress} show={createPresentation.isPending} />
+
           <div className="flex justify-end gap-4">
             <Link to="/presentations">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={createPresentation.isPending}>
                 Cancel
               </Button>
             </Link>
