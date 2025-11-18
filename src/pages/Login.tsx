@@ -51,21 +51,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 sm:p-6">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient mb-2">
+        <div className="text-center mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-2">
             The Final Conflict Ministry
           </h1>
-          <p className="text-muted-foreground">Admin Portal</p>
+          <p className="text-sm sm:text-base text-muted-foreground">Admin Portal</p>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-8 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-6">Sign In</h2>
-          
-          <form onSubmit={handleLogin} className="space-y-4">
+        <div className="bg-card border border-border rounded-lg p-6 sm:p-8 shadow-lg">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Sign In</h2>
+
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -73,11 +73,12 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="w-full h-10 sm:h-11"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -85,36 +86,37 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="w-full h-10 sm:h-11"
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="remember"
                   checked={rememberMe}
                   onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                 />
-                <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                <Label htmlFor="remember" className="text-xs sm:text-sm font-normal cursor-pointer">
                   Remember me
                 </Label>
               </div>
               <button
                 type="button"
-                className="text-sm text-primary hover:underline"
+                className="text-xs sm:text-sm text-primary hover:underline text-left sm:text-right"
                 onClick={() => toast.info("Password reset feature coming soon")}
               >
                 Forgot password?
               </button>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full h-10 sm:h-11" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-xs sm:text-sm text-muted-foreground mt-4 sm:mt-6 px-4">
           © 2024 The Final Conflict Ministry. All rights reserved.
         </p>
       </div>

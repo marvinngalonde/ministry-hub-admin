@@ -106,11 +106,26 @@ export function validateFile(
     };
   }
 
-  if (options.allowedTypes && !options.allowedTypes.includes(file.type)) {
-    return {
-      valid: false,
-      error: `File type not allowed. Allowed types: ${options.allowedTypes.join(', ')}`,
-    };
+  if (options.allowedTypes && options.allowedTypes.length > 0) {
+    // Get file extension
+    const fileExt = '.' + file.name.split('.').pop()?.toLowerCase();
+
+    // Check if any allowed type matches
+    const isAllowed = options.allowedTypes.some(type => {
+      // Check file extension
+      if (type.startsWith('.')) {
+        return type.toLowerCase() === fileExt;
+      }
+      // Check MIME type
+      return file.type.startsWith(type.replace('*', ''));
+    });
+
+    if (!isAllowed) {
+      return {
+        valid: false,
+        error: `File type not allowed. Allowed types: ${options.allowedTypes.join(', ')}`,
+      };
+    }
   }
 
   return { valid: true };

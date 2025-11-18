@@ -11,6 +11,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -42,7 +43,8 @@ export default function PresentationEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: presentation, isLoading } = usePresentation(id!);
-  const updatePresentation = useUpdatePresentation(id!);
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const updatePresentation = useUpdatePresentation(id!, setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -97,7 +99,7 @@ export default function PresentationEdit() {
   if (!presentation) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Presentation not found</p>
+        <p className="text-sm sm:text-base text-muted-foreground">Presentation not found</p>
         <Link to="/presentations">
           <Button className="mt-4">Back to Presentations</Button>
         </Link>
@@ -106,25 +108,25 @@ export default function PresentationEdit() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/presentations">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:h-5" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Presentation</h1>
-          <p className="text-muted-foreground">Update presentation details and media</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Presentation</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update presentation details and media</p>
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <FormField
                 control={form.control}
                 name="title"
@@ -216,26 +218,26 @@ export default function PresentationEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Media Files</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-6">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-2">
                 <Label>Video File</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {presentation.video_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
                   accept="video/*"
-                  maxSize={2 * 1024 * 1024 * 1024}
+                  maxSize={10 * 1024 * 1024 * 1024}
                   onFileSelect={setVideoFile}
                   label="Upload new video to replace current one"
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {presentation.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {presentation.thumbnail_url && !thumbnailFile && (
@@ -255,8 +257,8 @@ export default function PresentationEdit() {
             </div>
           </Card>
 
-          <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Publishing Options</h2>
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Publishing Options</h2>
 
             <FormField
               control={form.control}
@@ -281,13 +283,15 @@ export default function PresentationEdit() {
             />
           </Card>
 
-          <div className="flex justify-end gap-4">
-            <Link to="/presentations">
-              <Button type="button" variant="outline">
+          <UploadProgress progress={uploadProgress} show={updatePresentation.isPending} />
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <Link to="/presentations" className="w-full sm:w-auto order-2 sm:order-1">
+              <Button type="button" variant="outline" disabled={updatePresentation.isPending} className="w-full">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={updatePresentation.isPending}>
+            <Button type="submit" disabled={updatePresentation.isPending} className="w-full sm:w-auto order-1 sm:order-2">
               {updatePresentation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}

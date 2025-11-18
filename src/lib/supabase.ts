@@ -80,11 +80,14 @@ export interface UserProfile {
 
 export interface CommunityPost {
   id: string;
-  user_id: string;
+  author_id: string;
   group_id?: string;
   content: string;
   image_url?: string;
-  status?: 'pending' | 'approved' | 'rejected';
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  is_published: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -101,7 +104,8 @@ export interface CommunityGroup {
 export interface PostComment {
   id: string;
   post_id: string;
-  user_id: string;
-  comment: string;
+  author_id: string;
+  content: string;
   created_at: string;
+  updated_at: string;
 }

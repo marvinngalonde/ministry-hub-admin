@@ -19,7 +19,7 @@ interface FileUploadProps {
 export function FileUpload({
   onFileSelect,
   accept,
-  maxSize = 2 * 1024 * 1024 * 1024, // 2GB default
+  maxSize = 10 * 1024 * 1024 * 1024, // 10GB default
   label = 'Drop file here or click to upload',
   preview,
   className,

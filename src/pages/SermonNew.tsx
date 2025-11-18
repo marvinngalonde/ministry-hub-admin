@@ -13,12 +13,14 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { UploadProgress } from '@/components/UploadProgress';
 
 export default function SermonNew() {
   const navigate = useNavigate();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [description, setDescription] = useState('');
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
 
   const {
     register,
@@ -34,7 +36,7 @@ export default function SermonNew() {
     },
   });
 
-  const createSermon = useCreateSermon();
+  const createSermon = useCreateSermon(setUploadProgress);
 
   const onSubmit = async (data: SermonFormData) => {
     if (!videoFile || !thumbnailFile) {
@@ -128,7 +130,7 @@ export default function SermonNew() {
               <FileUpload
                 onFileSelect={setVideoFile}
                 accept={{ 'video/*': ['.mp4', '.mov', '.avi'] }}
-                maxSize={2 * 1024 * 1024 * 1024} // 2GB
+                maxSize={10 * 1024 * 1024 * 1024} // 10GB
                 label="Drop video here or click to upload"
                 fileType="video"
               />
@@ -182,8 +184,10 @@ export default function SermonNew() {
           </div>
         </Card>
 
+        <UploadProgress progress={uploadProgress} show={createSermon.isPending} />
+
         <div className="flex items-center gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate('/sermons')}>
+          <Button type="button" variant="outline" onClick={() => navigate('/sermons')} disabled={createSermon.isPending}>
             Cancel
           </Button>
           <Button

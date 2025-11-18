@@ -39,50 +39,52 @@ export default function Users() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Users</h1>
-          <p className="text-muted-foreground">Manage user accounts and permissions</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Users</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage user accounts and permissions</p>
         </div>
-        <Button>
-          <UserPlus className="h-4 w-4 mr-2" />
+        <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
+          <UserPlus className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
           Invite User
         </Button>
       </div>
 
-      <Card className="p-6">
-        <div className="mb-6">
+      <Card className="p-4 sm:p-6">
+        <div className="mb-4 sm:mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4 sm:h-4 text-muted-foreground" />
             <Input
               placeholder="Search users by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 min-h-[44px]"
             />
           </div>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12 px-4">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-sm text-muted-foreground">Loading users...</p>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading users...</p>
           </div>
         ) : !data?.users.length ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No users found</p>
+          <div className="text-center py-8 sm:py-12 px-4">
+            <p className="text-sm sm:text-base text-muted-foreground">No users found</p>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+              <div className="rounded-md border">
+                <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[150px]">User</TableHead>
+                  <TableHead className="min-w-[200px] hidden md:table-cell">Email</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Role</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Joined</TableHead>
+                  <TableHead className="text-right min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -106,22 +108,22 @@ export default function Users() {
                         <span className="font-medium">{user.full_name || 'No name'}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">{user.email}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={getRoleBadgeVariant(user.role)}>
                         {user.role}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {new Date(user.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="sm">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2">
+                        <Button variant="ghost" size="sm" title="Edit" className="h-9 px-3">
                           Edit
                         </Button>
-                        <Button variant="ghost" size="sm">
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                        <Button variant="ghost" size="sm" title="Delete" className="h-9 w-9 p-0">
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
@@ -129,6 +131,8 @@ export default function Users() {
                 ))}
               </TableBody>
             </Table>
+              </div>
+            </div>
           </div>
         )}
       </Card>

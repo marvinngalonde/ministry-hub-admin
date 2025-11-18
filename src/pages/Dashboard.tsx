@@ -85,32 +85,32 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Welcome back! Here's an overview of your ministry's content.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {statCards.map((stat) => {
           const Icon = stat.icon;
 
           return (
             <Link key={stat.title} to={stat.link}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer active:scale-95 transition-transform">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                  <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
                     {stat.title}
                   </CardTitle>
-                  <Icon className={`w-5 h-5 ${stat.color}`} />
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{stat.value}</div>
+                  <div className="text-2xl sm:text-3xl font-bold">{stat.value}</div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Click to view details
+                    Tap to view details
                   </p>
                 </CardContent>
               </Card>
@@ -119,29 +119,29 @@ const Dashboard = () => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Content Breakdown */}
         <Card>
           <CardHeader>
-            <CardTitle>Content Breakdown</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Content Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-2 sm:space-y-3">
               {contentBreakdown.map((content) => {
                 const Icon = content.icon;
                 return (
                   <Link key={content.title} to={content.link}>
-                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full ${content.color} flex items-center justify-center`}>
-                          <Icon className="w-5 h-5 text-white" />
+                    <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-muted active:bg-muted transition-colors cursor-pointer min-h-[60px] sm:min-h-[72px]">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full ${content.color} flex items-center justify-center flex-shrink-0`}>
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium">{content.title}</p>
-                          <p className="text-xs text-muted-foreground">View all items</p>
+                          <p className="text-sm sm:text-base font-medium">{content.title}</p>
+                          <p className="text-xs text-muted-foreground">Tap to view all</p>
                         </div>
                       </div>
-                      <div className="text-2xl font-bold">{content.count}</div>
+                      <div className="text-xl sm:text-2xl font-bold">{content.count}</div>
                     </div>
                   </Link>
                 );
@@ -153,18 +153,18 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2 sm:gap-3">
               {quickActions.map((action) => {
                 const Icon = action.icon;
                 return (
                   <Link key={action.title} to={action.link}>
-                    <Button variant="outline" className="w-full justify-start h-auto py-4">
-                      <Icon className="w-5 h-5 mr-3" />
+                    <Button variant="outline" className="w-full justify-start h-auto py-3 sm:py-4 min-h-[56px] active:scale-95 transition-transform">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0" />
                       <div className="text-left">
-                        <p className="font-medium">{action.title}</p>
+                        <p className="text-sm sm:text-base font-medium">{action.title}</p>
                         <p className="text-xs text-muted-foreground">Create new content</p>
                       </div>
                     </Button>
@@ -180,27 +180,27 @@ const Dashboard = () => {
       {stats?.totalContent === 0 && (
         <Card className="border-dashed border-2">
           <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Getting Started</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-6">
-              <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No content yet</h3>
-              <p className="text-muted-foreground mb-6">
+            <div className="text-center py-4 sm:py-6 px-2">
+              <FileText className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">No content yet</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                 Start by uploading your first sermon, documentary, presentation, or material.
               </p>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Link to="/sermons/new">
-                  <Button>Upload Sermon</Button>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 justify-center max-w-2xl mx-auto">
+                <Link to="/sermons/new" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto">Upload Sermon</Button>
                 </Link>
-                <Link to="/documentaries/new">
-                  <Button variant="outline">Upload Documentary</Button>
+                <Link to="/documentaries/new" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto">Upload Documentary</Button>
                 </Link>
-                <Link to="/presentations/new">
-                  <Button variant="outline">Upload Presentation</Button>
+                <Link to="/presentations/new" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto">Upload Presentation</Button>
                 </Link>
-                <Link to="/materials/new">
-                  <Button variant="outline">Upload Material</Button>
+                <Link to="/materials/new" className="w-full sm:w-auto">
+                  <Button variant="outline" className="w-full sm:w-auto">Upload Material</Button>
                 </Link>
               </div>
             </div>

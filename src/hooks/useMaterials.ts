@@ -81,7 +81,7 @@ export function useMaterial(id: string) {
   });
 }
 
-export function useCreateMaterial() {
+export function useCreateMaterial(onUploadProgress?: (progress: { file: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -89,8 +89,34 @@ export function useCreateMaterial() {
       document_file: File;
       thumbnail_file: File;
     }) => {
-      const contentUrl = await uploadFile(formData.document_file, 'materials', 'documents');
-      const thumbnailUrl = await uploadFile(formData.thumbnail_file, 'materials', 'thumbnails');
+      let fileProgress = 0;
+      let thumbnailProgress = 0;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ file: fileProgress, thumbnail: thumbnailProgress });
+      };
+
+      // Upload document file
+      const contentUrl = await uploadFile(
+        formData.document_file,
+        'materials',
+        'documents',
+        (progress) => {
+          fileProgress = progress;
+          updateProgress();
+        }
+      );
+
+      // Upload thumbnail
+      const thumbnailUrl = await uploadFile(
+        formData.thumbnail_file,
+        'materials',
+        'thumbnails',
+        (progress) => {
+          thumbnailProgress = progress;
+          updateProgress();
+        }
+      );
 
       const { data, error } = await supabase
         .from('spiritual_materials')
@@ -127,7 +153,7 @@ export function useCreateMaterial() {
   });
 }
 
-export function useUpdateMaterial(id: string) {
+export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { file: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -137,13 +163,37 @@ export function useUpdateMaterial(id: string) {
     }) => {
       let contentUrl: string | undefined;
       let thumbnailUrl: string | undefined;
+      let fileProgress = 100;
+      let thumbnailProgress = 100;
+
+      const updateProgress = () => {
+        onUploadProgress?.({ file: fileProgress, thumbnail: thumbnailProgress });
+      };
 
       if (formData.document_file) {
-        contentUrl = await uploadFile(formData.document_file, 'materials', 'documents');
+        fileProgress = 0;
+        contentUrl = await uploadFile(
+          formData.document_file,
+          'materials',
+          'documents',
+          (progress) => {
+            fileProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       if (formData.thumbnail_file) {
-        thumbnailUrl = await uploadFile(formData.thumbnail_file, 'materials', 'thumbnails');
+        thumbnailProgress = 0;
+        thumbnailUrl = await uploadFile(
+          formData.thumbnail_file,
+          'materials',
+          'thumbnails',
+          (progress) => {
+            thumbnailProgress = progress;
+            updateProgress();
+          }
+        );
       }
 
       const updateData: any = {

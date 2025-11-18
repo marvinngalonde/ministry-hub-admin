@@ -11,6 +11,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { UploadProgress } from '@/components/UploadProgress';
 import {
   Form,
   FormControl,
@@ -39,7 +40,8 @@ type MaterialFormData = z.infer<typeof materialSchema>;
 
 export default function MaterialNew() {
   const navigate = useNavigate();
-  const createMaterial = useCreateMaterial();
+  const [uploadProgress, setUploadProgress] = useState<{ file: number; thumbnail: number }>({ file: 0, thumbnail: 0 });
+  const createMaterial = useCreateMaterial(setUploadProgress);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
@@ -228,9 +230,11 @@ export default function MaterialNew() {
             />
           </Card>
 
+          <UploadProgress progress={uploadProgress} show={createMaterial.isPending} />
+
           <div className="flex justify-end gap-4">
             <Link to="/materials">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={createMaterial.isPending}>
                 Cancel
               </Button>
             </Link>
