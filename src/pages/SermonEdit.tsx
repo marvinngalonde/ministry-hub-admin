@@ -207,10 +207,10 @@ export default function SermonEdit() {
           <Card className="p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-4 sm:space-y-6">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-2">
                 <Label>Video File</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {sermon.video_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
@@ -221,9 +221,9 @@ export default function SermonEdit() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {sermon.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {sermon.thumbnail_url && !thumbnailFile && (
@@ -273,10 +273,10 @@ export default function SermonEdit() {
                 control={form.control}
                 name="featured"
                 render={({ field }) => (
-                  <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border p-4 gap-3 sm:gap-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Featured Sermon</FormLabel>
-                      <p className="text-sm text-muted-foreground">
+                      <FormLabel className="text-sm sm:text-base">Featured Sermon</FormLabel>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Display this sermon prominently on the homepage
                       </p>
                     </div>
@@ -294,15 +294,15 @@ export default function SermonEdit() {
 
           <UploadProgress progress={uploadProgress} show={updateSermon.isPending} />
 
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
-            <Link to="/sermons" className="w-full sm:w-auto">
-              <Button type="button" variant="outline" disabled={updateSermon.isPending} className="w-full sm:w-auto min-h-[44px]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <Link to="/sermons" className="w-full sm:w-auto order-2 sm:order-1">
+              <Button type="button" variant="outline" disabled={updateSermon.isPending} className="w-full">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={updateSermon.isPending} className="w-full sm:w-auto min-h-[44px]">
+            <Button type="submit" disabled={updateSermon.isPending} className="w-full sm:w-auto order-1 sm:order-2">
               {updateSermon.isPending && (
-                <Loader2 className="mr-2 w-4 h-4 sm:w-4 sm:h-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Update Sermon
             </Button>

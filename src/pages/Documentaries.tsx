@@ -163,12 +163,12 @@ export default function Documentaries() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="w-[100px]">Thumbnail</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[100px] hidden sm:table-cell">Thumbnail</TableHead>
+                  <TableHead className="min-w-[150px]">Title</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Duration</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="min-w-[100px] hidden md:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -180,7 +180,7 @@ export default function Documentaries() {
                         onCheckedChange={() => toggleSelect(documentary.id)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <img
                         src={documentary.thumbnail_url}
                         alt={documentary.title}
@@ -188,29 +188,30 @@ export default function Documentaries() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{documentary.title}</TableCell>
-                    <TableCell>{documentary.duration} min</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">{documentary.duration} min</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={documentary.status === 'published' ? 'default' : 'secondary'}>
                         {documentary.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {new Date(documentary.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Link to={`/documentaries/${documentary.id}/edit`}>
-                          <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
-                            <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
+                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 p-0">
+                            <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteId(documentary.id)}
-                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                          title="Delete"
+                          className="h-9 w-9 p-0"
                         >
-                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

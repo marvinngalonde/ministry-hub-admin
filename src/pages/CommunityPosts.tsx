@@ -115,11 +115,11 @@ export default function CommunityPosts() {
                 <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Content</TableHead>
-                  <TableHead>Group</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[150px]">User</TableHead>
+                  <TableHead className="min-w-[200px]">Content</TableHead>
+                  <TableHead className="min-w-[120px] hidden md:table-cell">Group</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[80px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -149,10 +149,10 @@ export default function CommunityPosts() {
                         />
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {post.community_groups?.name || '-'}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {new Date(post.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
@@ -160,9 +160,10 @@ export default function CommunityPosts() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeleteId(post.id)}
-                        className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                        title="Delete"
+                        className="h-9 w-9 p-0"
                       >
-                        <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                        <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>

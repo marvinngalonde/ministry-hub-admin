@@ -186,13 +186,13 @@ export default function Materials() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="w-[100px]">Thumbnail</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Author</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[100px] hidden sm:table-cell">Thumbnail</TableHead>
+                  <TableHead className="min-w-[150px]">Title</TableHead>
+                  <TableHead className="min-w-[120px] hidden lg:table-cell">Type</TableHead>
+                  <TableHead className="min-w-[120px] hidden md:table-cell">Author</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -204,7 +204,7 @@ export default function Materials() {
                         onCheckedChange={() => toggleSelect(material.id)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {material.thumbnail_url ? (
                         <img
                           src={material.thumbnail_url}
@@ -218,32 +218,33 @@ export default function Materials() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{material.title}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <Badge variant="outline">{getTypeLabel(material.type)}</Badge>
                     </TableCell>
-                    <TableCell>{material.author || 'N/A'}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">{material.author || 'N/A'}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={material.status === 'published' ? 'default' : 'secondary'}>
                         {material.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {new Date(material.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Link to={`/materials/${material.id}/edit`}>
-                          <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
-                            <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
+                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 p-0">
+                            <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteId(material.id)}
-                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                          title="Delete"
+                          className="h-9 w-9 p-0"
                         >
-                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

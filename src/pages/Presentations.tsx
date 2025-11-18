@@ -188,14 +188,14 @@ export default function Presentations() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="w-[100px]">Thumbnail</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Speaker</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[100px] hidden sm:table-cell">Thumbnail</TableHead>
+                  <TableHead className="min-w-[150px]">Title</TableHead>
+                  <TableHead className="min-w-[120px] hidden lg:table-cell">Type</TableHead>
+                  <TableHead className="min-w-[120px] hidden md:table-cell">Speaker</TableHead>
+                  <TableHead className="min-w-[100px] hidden xl:table-cell">Duration</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -207,7 +207,7 @@ export default function Presentations() {
                         onCheckedChange={() => toggleSelect(presentation.id)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <img
                         src={presentation.thumbnail_url}
                         alt={presentation.title}
@@ -215,33 +215,34 @@ export default function Presentations() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{presentation.title}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <Badge variant="outline">{getTypeLabel(presentation.type)}</Badge>
                     </TableCell>
-                    <TableCell>{presentation.speaker || 'N/A'}</TableCell>
-                    <TableCell>{presentation.duration} min</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">{presentation.speaker || 'N/A'}</TableCell>
+                    <TableCell className="hidden xl:table-cell">{presentation.duration} min</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={presentation.status === 'published' ? 'default' : 'secondary'}>
                         {presentation.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {new Date(presentation.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <Link to={`/presentations/${presentation.id}/edit`}>
-                          <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
-                            <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
+                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 p-0">
+                            <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setDeleteId(presentation.id)}
-                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                          title="Delete"
+                          className="h-9 w-9 p-0"
                         >
-                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

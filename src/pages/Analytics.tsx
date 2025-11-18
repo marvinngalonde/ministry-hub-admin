@@ -55,74 +55,74 @@ export default function Analytics() {
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-              <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900 rounded-lg flex-shrink-0">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Total Users</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalUsers || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Total Users</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalUsers || 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-              <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900 rounded-lg flex-shrink-0">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Community Posts</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalPosts || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Community Posts</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalPosts || 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
-              <Film className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-orange-100 dark:bg-orange-900 rounded-lg flex-shrink-0">
+              <Film className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Documentaries</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalDocumentaries || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Documentaries</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalDocumentaries || 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-pink-100 dark:bg-pink-900 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-pink-600 dark:text-pink-400" />
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-pink-100 dark:bg-pink-900 rounded-lg flex-shrink-0">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-pink-600 dark:text-pink-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Presentations</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalPresentations || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Presentations</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalPresentations || 0}</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-              <FileText className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+        <Card className="p-4 sm:p-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex-shrink-0">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Spiritual Materials</h3>
-              <p className="text-3xl font-bold mt-1">{stats?.totalMaterials || 0}</p>
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Spiritual Materials</h3>
+              <p className="text-2xl sm:text-3xl font-bold mt-1">{stats?.totalMaterials || 0}</p>
             </div>
           </div>
         </Card>
       </div>
 
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Content Distribution</h2>
-        <div className="space-y-4">
+      <Card className="p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Content Distribution</h2>
+        <div className="space-y-3 sm:space-y-4">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Sermons</span>
-              <span className="text-sm text-muted-foreground">{stats?.totalSermons || 0}</span>
+              <span className="text-xs sm:text-sm font-medium">Sermons</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{stats?.totalSermons || 0}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
@@ -136,8 +136,8 @@ export default function Analytics() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Documentaries</span>
-              <span className="text-sm text-muted-foreground">{stats?.totalDocumentaries || 0}</span>
+              <span className="text-xs sm:text-sm font-medium">Documentaries</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{stats?.totalDocumentaries || 0}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
@@ -151,8 +151,8 @@ export default function Analytics() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Presentations</span>
-              <span className="text-sm text-muted-foreground">{stats?.totalPresentations || 0}</span>
+              <span className="text-xs sm:text-sm font-medium">Presentations</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">{stats?.totalPresentations || 0}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div

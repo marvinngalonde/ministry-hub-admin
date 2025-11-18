@@ -80,11 +80,11 @@ export default function Users() {
                 <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[150px]">User</TableHead>
+                  <TableHead className="min-w-[200px] hidden md:table-cell">Email</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Role</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Joined</TableHead>
+                  <TableHead className="text-right min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -108,22 +108,22 @@ export default function Users() {
                         <span className="font-medium">{user.full_name || 'No name'}</span>
                       </div>
                     </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">{user.email}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={getRoleBadgeVariant(user.role)}>
                         {user.role}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {new Date(user.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1 sm:gap-2">
-                        <Button variant="ghost" size="sm" className="h-9 px-3 sm:px-4">
+                        <Button variant="ghost" size="sm" title="Edit" className="h-9 px-3">
                           Edit
                         </Button>
-                        <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
-                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                        <Button variant="ghost" size="sm" title="Delete" className="h-9 w-9 p-0">
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>

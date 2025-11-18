@@ -64,18 +64,18 @@ export default function CommunityGroups() {
                 <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Image</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Created By</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[80px] hidden sm:table-cell">Image</TableHead>
+                  <TableHead className="min-w-[150px]">Name</TableHead>
+                  <TableHead className="min-w-[200px] hidden md:table-cell">Description</TableHead>
+                  <TableHead className="min-w-[120px] hidden lg:table-cell">Created By</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[80px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {groups.map((group: any) => (
                   <TableRow key={group.id}>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {group.image_url && (
                         <img
                           src={group.image_url}
@@ -85,17 +85,18 @@ export default function CommunityGroups() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{group.name}</TableCell>
-                    <TableCell className="max-w-md truncate">{group.description || '-'}</TableCell>
-                    <TableCell>{group.user_profiles?.full_name || 'Unknown'}</TableCell>
-                    <TableCell>{new Date(group.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="max-w-md truncate hidden md:table-cell">{group.description || '-'}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{group.user_profiles?.full_name || 'Unknown'}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{new Date(group.created_at).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeleteId(group.id)}
-                        className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                        title="Delete"
+                        className="h-9 w-9 p-0"
                       >
-                        <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                        <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </TableCell>
                   </TableRow>

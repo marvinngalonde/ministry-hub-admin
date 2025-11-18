@@ -102,11 +102,11 @@ export default function DocumentaryEdit() {
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
       <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/documentaries">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="w-4 h-4 sm:w-4 sm:h-4" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:h-5" />
           </Button>
         </Link>
         <div>
@@ -116,7 +116,7 @@ export default function DocumentaryEdit() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <Card className="p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Basic Information</h2>
 
@@ -177,10 +177,10 @@ export default function DocumentaryEdit() {
           <Card className="p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Media Files</h2>
 
-            <div className="space-y-3 sm:space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-2">
                 <Label>Video File</Label>
-                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {documentary.video_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
@@ -191,9 +191,9 @@ export default function DocumentaryEdit() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label>Thumbnail Image</Label>
-                <p className="text-sm text-sm sm:text-base text-muted-foreground mb-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                   Current: {documentary.thumbnail_url ? 'Uploaded' : 'None'}
                 </p>
                 {documentary.thumbnail_url && !thumbnailFile && (
@@ -241,15 +241,15 @@ export default function DocumentaryEdit() {
 
           <UploadProgress progress={uploadProgress} show={updateDocumentary.isPending} />
 
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
-            <Link to="/documentaries">
-              <Button type="button" variant="outline" disabled={updateDocumentary.isPending}>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <Link to="/documentaries" className="w-full sm:w-auto order-2 sm:order-1">
+              <Button type="button" variant="outline" disabled={updateDocumentary.isPending} className="w-full">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={updateDocumentary.isPending}>
+            <Button type="submit" disabled={updateDocumentary.isPending} className="w-full sm:w-auto order-1 sm:order-2">
               {updateDocumentary.isPending && (
-                <Loader2 className="mr-2 w-4 h-4 sm:w-4 sm:h-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               Update Documentary
             </Button>

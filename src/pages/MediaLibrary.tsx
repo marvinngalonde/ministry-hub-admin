@@ -50,9 +50,9 @@ export default function MediaLibrary() {
             <p className="text-sm sm:text-base text-muted-foreground">No files found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
             {files.map((file: any, index: number) => (
-              <div key={`${file.bucket}-${file.name}-${index}`} className="border rounded-lg p-4">
+              <div key={`${file.bucket}-${file.name}-${index}`} className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-muted rounded mb-2 flex items-center justify-center overflow-hidden">
                   {file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                     <img src={file.url} alt={file.name} className="w-full h-full object-cover rounded" />
@@ -64,9 +64,9 @@ export default function MediaLibrary() {
                     <div className="text-4xl">📁</div>
                   )}
                 </div>
-                <p className="text-sm font-medium truncate" title={file.name}>{file.name}</p>
-                <p className="text-xs text-muted-foreground capitalize">{file.bucket}</p>
-                <div className="flex gap-2 mt-2">
+                <p className="text-xs sm:text-sm font-medium truncate" title={file.name}>{file.name}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground capitalize">{file.bucket}</p>
+                <div className="flex gap-1 sm:gap-2 mt-2">
                   <Button
                     size="sm"
                     variant="ghost"
@@ -75,11 +75,12 @@ export default function MediaLibrary() {
                       alert('URL copied to clipboard!');
                     }}
                     title="Copy URL"
+                    className="h-8 w-8 p-0 flex-shrink-0"
                   >
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
-                  <Button size="sm" variant="ghost" title="Delete file">
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                  <Button size="sm" variant="ghost" title="Delete file" className="h-8 w-8 p-0 flex-shrink-0">
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-destructive" />
                   </Button>
                 </div>
               </div>

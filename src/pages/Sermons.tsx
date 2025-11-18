@@ -178,13 +178,13 @@ export default function Sermons() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="w-[100px]">Thumbnail</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Speaker</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="w-[100px] hidden sm:table-cell">Thumbnail</TableHead>
+                  <TableHead className="min-w-[150px]">Title</TableHead>
+                  <TableHead className="min-w-[120px] hidden md:table-cell">Speaker</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Duration</TableHead>
+                  <TableHead className="min-w-[100px] hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="min-w-[100px] hidden lg:table-cell">Date</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -196,7 +196,7 @@ export default function Sermons() {
                         onCheckedChange={() => toggleSelect(sermon.id)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <img
                         src={sermon.thumbnail_url}
                         alt={sermon.title}
@@ -204,14 +204,14 @@ export default function Sermons() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{sermon.title}</TableCell>
-                    <TableCell>{sermon.speaker}</TableCell>
-                    <TableCell>{sermon.duration} min</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">{sermon.speaker}</TableCell>
+                    <TableCell className="hidden lg:table-cell">{sermon.duration} min</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge variant={sermon.status === 'published' ? 'default' : 'secondary'}>
                         {sermon.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {new Date(sermon.created_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
@@ -221,13 +221,13 @@ export default function Sermons() {
                           size="sm"
                           onClick={() => window.open(sermon.video_url, '_blank')}
                           title="View Video"
-                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                          className="h-9 w-9 p-0"
                         >
-                          <Eye className="w-4 h-4 sm:w-4 sm:h-4" />
+                          <Eye className="w-4 h-4" />
                         </Button>
                         <Link to={`/sermons/${sermon.id}/edit`}>
-                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 sm:h-9 sm:w-9 p-0">
-                            <Edit className="w-4 h-4 sm:w-4 sm:h-4" />
+                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 p-0">
+                            <Edit className="w-4 h-4" />
                           </Button>
                         </Link>
                         <Button
@@ -235,9 +235,9 @@ export default function Sermons() {
                           size="sm"
                           onClick={() => setDeleteId(sermon.id)}
                           title="Delete"
-                          className="h-9 w-9 sm:h-9 sm:w-9 p-0"
+                          className="h-9 w-9 p-0"
                         >
-                          <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 text-destructive" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
                     </TableCell>
