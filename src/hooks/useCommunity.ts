@@ -40,9 +40,10 @@ export function useCommunityPosts(filters: PostFilters) {
         query = query.eq('group_id', filters.groupId);
       }
 
-      // Note: status column doesn't exist in community_posts table
-      // The table uses is_published (boolean) instead
-      // Removed: if (filters.status && filters.status !== 'all') { query = query.eq('status', filters.status); }
+      // Handle status filter
+      if (filters.status && filters.status !== 'all') {
+        query = query.eq('is_published', filters.status === 'published');
+      }
 
       query = query.order('created_at', { ascending: false });
 
@@ -71,8 +72,10 @@ export function useCommunityPosts(filters: PostFilters) {
           fallbackQuery = fallbackQuery.eq('group_id', filters.groupId);
         }
 
-        // Note: status column doesn't exist in community_posts table
-        // Removed: if (filters.status && filters.status !== 'all') { fallbackQuery = fallbackQuery.eq('status', filters.status); }
+        // Handle status filter
+        if (filters.status && filters.status !== 'all') {
+          fallbackQuery = fallbackQuery.eq('is_published', filters.status === 'published');
+        }
 
         fallbackQuery = fallbackQuery.order('created_at', { ascending: false });
         fallbackQuery = fallbackQuery.range(from, to);

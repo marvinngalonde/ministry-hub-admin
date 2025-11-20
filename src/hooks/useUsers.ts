@@ -90,14 +90,40 @@ export function useDeleteUser() {
 
   return useMutation({
     mutationFn: async (userId: string) => {
-      const { error } = await supabase.auth.admin.deleteUser(userId);
-      if (error) throw error;
+      // First, delete the user's profile
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (profileError) {
+        console.error('Error deleting user profile:', profileError);
+        // Log the error and continue to delete the auth user
+      }
+
+      // Then, delete the user from auth
+      const { data, error: authError } = await supabase.auth.admin.deleteUser(userId);
+
+      if (authError) {
+        // If the auth user deletion fails, we might have an orphaned profile
+        throw authError;
+      }
+      
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       toast({
         title: 'Success',
         description: 'User deleted successfully',
+      });
+    },
+    onError: (error: Error) => {
+      console.error('Delete error:', error);
+      toast({
+        title: 'Error',
+        description: `Failed to delete user: ${error.message}`,
+        variant: 'destructive',
       });
     },
   });

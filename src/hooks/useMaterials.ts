@@ -86,7 +86,7 @@ export function useCreateMaterial(onUploadProgress?: (progress: { file: number; 
 
   return useMutation({
     mutationFn: async (formData: MaterialFormData & {
-      document_file: File;
+      file: File;
       thumbnail_file: File;
     }) => {
       let fileProgress = 0;
@@ -97,8 +97,8 @@ export function useCreateMaterial(onUploadProgress?: (progress: { file: number; 
       };
 
       // Upload document file
-      const contentUrl = await uploadFile(
-        formData.document_file,
+      const fileUrl = await uploadFile(
+        formData.file,
         'materials',
         'documents',
         (progress) => {
@@ -125,7 +125,7 @@ export function useCreateMaterial(onUploadProgress?: (progress: { file: number; 
           type: formData.type,
           author: formData.author,
           description: formData.description,
-          content_url: contentUrl,
+          file_url: fileUrl,
           thumbnail_url: thumbnailUrl,
           status: formData.status,
         })
@@ -158,10 +158,10 @@ export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { fi
 
   return useMutation({
     mutationFn: async (formData: Partial<MaterialFormData> & {
-      document_file?: File;
+      file?: File;
       thumbnail_file?: File;
     }) => {
-      let contentUrl: string | undefined;
+      let fileUrl: string | undefined;
       let thumbnailUrl: string | undefined;
       let fileProgress = 100;
       let thumbnailProgress = 100;
@@ -170,10 +170,10 @@ export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { fi
         onUploadProgress?.({ file: fileProgress, thumbnail: thumbnailProgress });
       };
 
-      if (formData.document_file) {
+      if (formData.file) {
         fileProgress = 0;
-        contentUrl = await uploadFile(
-          formData.document_file,
+        fileUrl = await uploadFile(
+          formData.file,
           'materials',
           'documents',
           (progress) => {
@@ -201,10 +201,10 @@ export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { fi
         updated_at: new Date().toISOString(),
       };
 
-      if (contentUrl) updateData.content_url = contentUrl;
+      if (fileUrl) updateData.file_url = fileUrl;
       if (thumbnailUrl) updateData.thumbnail_url = thumbnailUrl;
 
-      delete updateData.document_file;
+      delete updateData.file;
       delete updateData.thumbnail_file;
 
       const { data, error } = await supabase
@@ -235,15 +235,15 @@ export function useDeleteMaterial() {
     mutationFn: async (id: string) => {
       const { data: material } = await supabase
         .from('spiritual_materials')
-        .select('content_url, thumbnail_url')
+        .select('file_url, thumbnail_url')
         .eq('id', id)
         .single();
 
       const { error } = await supabase.from('spiritual_materials').delete().eq('id', id);
       if (error) throw error;
 
-      if (material?.content_url) {
-        await deleteFileFromUrl(material.content_url, 'materials');
+      if (material?.file_url) {
+        await deleteFileFromUrl(material.file_url, 'materials');
       }
       if (material?.thumbnail_url) {
         await deleteFileFromUrl(material.thumbnail_url, 'materials');

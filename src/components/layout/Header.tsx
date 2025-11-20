@@ -1,4 +1,4 @@
-import { Bell, Search, User, LogOut, Settings } from "lucide-react";
+import { Bell, Search, User, LogOut, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,7 +12,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export const Header = () => {
+interface HeaderProps {
+  isSidebarCollapsed: boolean;
+  onSidebarToggle: () => void;
+}
+
+export const Header = ({ isSidebarCollapsed, onSidebarToggle }: HeaderProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,10 +28,31 @@ export const Header = () => {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
-       
+    <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between w-full">
+      {/* Left side - Sidebar toggle and search */}
+      <div className="flex items-center gap-4">
+        {/* Sidebar toggle button - Hidden on mobile */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onSidebarToggle}
+          className="hidden lg:flex"
+        >
+          {isSidebarCollapsed ? (
+            <ChevronRight className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
+        </Button>
+
+        {/* Search bar */}
+        <div className="relative">
+          {/* <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search..."
+            className="pl-10 w-80"
+          /> */}
+        </div>
       </div>
 
       {/* Right side */}

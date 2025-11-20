@@ -9,9 +9,12 @@ export const sermonSchema = z.object({
   date_preached: z.string().optional(),
   featured: z.boolean().default(false),
   status: z.enum(['draft', 'published']).default('draft'),
+  audio_url: z.string().optional(), // New field for audio URL
 });
 
-export type SermonFormData = z.infer<typeof sermonSchema>;
+export type SermonFormData = z.infer<typeof sermonSchema> & {
+  audio_file?: File; // New field for audio file upload
+};
 
 // Documentary validation schema
 export const documentarySchema = z.object({

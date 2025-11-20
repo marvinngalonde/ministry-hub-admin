@@ -87,19 +87,21 @@ export function useSermon(id: string) {
   });
 }
 
-export function useCreateSermon(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
+export function useCreateSermon(onUploadProgress?: (progress: { video: number; thumbnail: number; audio?: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: SermonFormData & {
       video_file: File;
       thumbnail_file: File;
+      audio_file?: File; // Optional audio file
     }) => {
       let videoProgress = 0;
       let thumbnailProgress = 0;
+      let audioProgress = 0;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress, audio: audioProgress });
       };
 
       // Upload video
@@ -124,6 +126,20 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
         }
       );
 
+      // Upload audio if provided
+      let audioUrl: string | undefined;
+      if (formData.audio_file) {
+        audioUrl = await uploadFile(
+          formData.audio_file,
+          'sermons',
+          'audio',
+          (progress) => {
+            audioProgress = progress;
+            updateProgress();
+          }
+        );
+      }
+
       // Insert sermon
       const { data, error } = await supabase
         .from('sermons')
@@ -134,6 +150,7 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
           duration: formData.duration,
           video_url: videoUrl,
           thumbnail_url: thumbnailUrl,
+          audio_url: audioUrl, // Include audio URL
           featured: formData.featured,
           status: formData.status,
           date_preached: formData.date_preached || new Date().toISOString(),
@@ -162,21 +179,24 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
   });
 }
 
-export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
+export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: { video: number; thumbnail: number; audio?: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: Partial<SermonFormData> & {
       video_file?: File;
       thumbnail_file?: File;
+      audio_file?: File; // Optional audio file
     }) => {
       let videoUrl: string | undefined;
       let thumbnailUrl: string | undefined;
+      let audioUrl: string | undefined;
       let videoProgress = 100;
       let thumbnailProgress = 100;
+      let audioProgress = 100;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress, audio: audioProgress });
       };
 
       // Upload new video if provided
@@ -207,6 +227,29 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
         );
       }
 
+      // Upload new audio if provided
+      if (formData.audio_file) {
+        audioProgress = 0;
+        // Optionally, fetch existing sermon to delete old audio file
+        const { data: existingSermon } = await supabase
+          .from('sermons')
+          .select('audio_url')
+          .eq('id', sermonId)
+          .single();
+        if (existingSermon?.audio_url) {
+          await deleteFileFromUrl(existingSermon.audio_url, 'sermons');
+        }
+        audioUrl = await uploadFile(
+          formData.audio_file,
+          'sermons',
+          'audio',
+          (progress) => {
+            audioProgress = progress;
+            updateProgress();
+          }
+        );
+      }
+
       // Update sermon
       const updateData: any = {
         ...formData,
@@ -215,10 +258,12 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
 
       if (videoUrl) updateData.video_url = videoUrl;
       if (thumbnailUrl) updateData.thumbnail_url = thumbnailUrl;
+      if (audioUrl) updateData.audio_url = audioUrl; // Include audio URL
 
       // Remove file objects from update data
       delete updateData.video_file;
       delete updateData.thumbnail_file;
+      delete updateData.audio_file; // Remove audio file object
 
       const { data, error } = await supabase
         .from('sermons')

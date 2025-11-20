@@ -34,10 +34,11 @@ export default function SermonEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: sermon, isLoading } = useSermon(id!);
-  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number; audio?: number }>({ video: 0, thumbnail: 0 });
   const updateSermon = useUpdateSermon(id!, setUploadProgress);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [audioFile, setAudioFile] = useState<File | null>(null); // New state for audio file
 
   const form = useForm<SermonFormData>({
     resolver: zodResolver(sermonSchema),
@@ -48,6 +49,7 @@ export default function SermonEdit() {
       duration: 0,
       featured: false,
       status: 'draft',
+      audio_url: '', // Initialize audio_url
     },
   });
 
@@ -61,6 +63,7 @@ export default function SermonEdit() {
         date_preached: sermon.date_preached,
         featured: sermon.featured,
         status: sermon.status,
+        audio_url: sermon.audio_url || '', // Set audio_url from sermon data
       });
     }
   }, [sermon, form]);
@@ -76,6 +79,10 @@ export default function SermonEdit() {
 
     if (thumbnailFile) {
       formData.thumbnail_file = thumbnailFile;
+    }
+
+    if (audioFile) {
+      formData.audio_file = audioFile; // Include audio file
     }
 
     await updateSermon.mutateAsync(formData);
@@ -238,6 +245,20 @@ export default function SermonEdit() {
                   maxSize={5 * 1024 * 1024} // 5MB
                   onFileSelect={setThumbnailFile}
                   label="Upload new thumbnail to replace current one"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Audio File</Label>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-2">
+                  Current: {sermon.audio_url ? 'Uploaded' : 'None'}
+                </p>
+                <FileUpload
+                  onFileSelect={setAudioFile}
+                  accept={{ 'audio/*': ['.mp3', '.wav', '.aac'] }}
+                  maxSize={200 * 1024 * 1024} // 200MB
+                  label="Upload new audio file to replace current one"
+                  fileType="audio"
                 />
               </div>
             </div>

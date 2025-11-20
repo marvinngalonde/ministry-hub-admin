@@ -42,7 +42,7 @@ export default function MaterialNew() {
   const navigate = useNavigate();
   const [uploadProgress, setUploadProgress] = useState<{ file: number; thumbnail: number }>({ file: 0, thumbnail: 0 });
   const createMaterial = useCreateMaterial(setUploadProgress);
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   const form = useForm<MaterialFormData>({
@@ -57,14 +57,14 @@ export default function MaterialNew() {
   });
 
   const onSubmit = async (data: MaterialFormData) => {
-    if (!documentFile || !thumbnailFile) {
+    if (!file || !thumbnailFile) {
       alert('Please upload both document and thumbnail files');
       return;
     }
 
     await createMaterial.mutateAsync({
       ...data,
-      document_file: documentFile,
+      file: file,
       thumbnail_file: thumbnailFile,
     });
 
@@ -167,19 +167,19 @@ export default function MaterialNew() {
 
             <div className="space-y-6">
               <div>
-                <Label>Document File *</Label>
+                <Label>File *</Label>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Upload the document (PDF, DOC, or DOCX - Max 50MB)
+                  Upload the document (PDF, DOC, etc. - Max 50MB)
                 </p>
                 <FileUpload
-                  accept="application/pdf,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept={{ 'application/*': ['.pdf', '.doc', '.docx'] }}
                   maxSize={50 * 1024 * 1024}
-                  onFileSelect={setDocumentFile}
+                  onFileSelect={setFile}
                   label="Drag & drop or click to upload document"
                 />
-                {documentFile && (
+                {file && (
                   <p className="text-sm text-green-600 mt-2">
-                    ✓ {documentFile.name} selected
+                    ✓ {file.name} selected
                   </p>
                 )}
               </div>
@@ -238,7 +238,7 @@ export default function MaterialNew() {
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={createMaterial.isPending || !documentFile || !thumbnailFile}>
+            <Button type="submit" disabled={createMaterial.isPending || !file || !thumbnailFile}>
               {createMaterial.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
