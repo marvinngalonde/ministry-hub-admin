@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase, type SpiritualMaterial } from '@/lib/supabase';
-import { uploadFile, deleteFileFromUrl } from '@/lib/storage';
 import { toast } from '@/hooks/use-toast';
+import { deleteFileFromUrl, uploadFile } from '@/lib/storage';
+import { supabase } from '@/lib/supabase';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface MaterialFormData {
   title: string;
@@ -99,7 +99,7 @@ export function useCreateMaterial(onUploadProgress?: (progress: { file: number; 
       // Upload document file
       const fileUrl = await uploadFile(
         formData.file,
-        'materials',
+        'spiritual-materials',
         'documents',
         (progress) => {
           fileProgress = progress;
@@ -110,7 +110,7 @@ export function useCreateMaterial(onUploadProgress?: (progress: { file: number; 
       // Upload thumbnail
       const thumbnailUrl = await uploadFile(
         formData.thumbnail_file,
-        'materials',
+        'spiritual-materials',
         'thumbnails',
         (progress) => {
           thumbnailProgress = progress;
@@ -174,7 +174,7 @@ export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { fi
         fileProgress = 0;
         fileUrl = await uploadFile(
           formData.file,
-          'materials',
+          'spiritual-materials',
           'documents',
           (progress) => {
             fileProgress = progress;
@@ -187,7 +187,7 @@ export function useUpdateMaterial(id: string, onUploadProgress?: (progress: { fi
         thumbnailProgress = 0;
         thumbnailUrl = await uploadFile(
           formData.thumbnail_file,
-          'materials',
+          'spiritual-materials',
           'thumbnails',
           (progress) => {
             thumbnailProgress = progress;
@@ -243,10 +243,10 @@ export function useDeleteMaterial() {
       if (error) throw error;
 
       if (material?.file_url) {
-        await deleteFileFromUrl(material.file_url, 'materials');
+        await deleteFileFromUrl(material.file_url, 'spiritual-materials');
       }
       if (material?.thumbnail_url) {
-        await deleteFileFromUrl(material.thumbnail_url, 'materials');
+        await deleteFileFromUrl(material.thumbnail_url, 'spiritual-materials');
       }
 
       return id;

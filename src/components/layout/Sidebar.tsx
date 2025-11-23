@@ -11,10 +11,7 @@ import {
   Image as ImageIcon,
   BarChart3,
   Settings,
-  Menu,
-  X,
 } from "lucide-react";
-import { useState } from "react";
 
 // Grouped menu items
 const menuGroups = [
@@ -58,69 +55,66 @@ const menuGroups = [
 interface SidebarProps {
   isCollapsed: boolean;
   onCollapseChange: (collapsed: boolean) => void;
+  isMobileOpen: boolean;
+  onMobileClose: () => void;
 }
 
-export const Sidebar = ({ isCollapsed, onCollapseChange }: SidebarProps) => {
+export const Sidebar = ({ isCollapsed, onCollapseChange, isMobileOpen, onMobileClose }: SidebarProps) => {
   const location = useLocation();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
     <>
-      {/* Mobile toggle */}
-      <button
-        onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card border border-border rounded-lg"
-      >
-        {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
-      {/* Overlay */}
+      {/* Overlay for mobile */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsMobileOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={onMobileClose}
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-screen bg-card border-r border-border z-40 transition-all duration-300",
+          "fixed top-0 left-0 h-screen z-50 transition-all duration-300 ease-in-out",
+          "bg-card/95 backdrop-blur-xl border-r border-white/10 shadow-2xl",
           "flex flex-col",
+          // Width logic
           isCollapsed ? "w-20" : "w-[280px]",
+          // Mobile transform logic
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
         <div className={cn(
-          "p-6 pt-2 pb-3 border-b border-border flex items-center gap-3 transition-all duration-300",
-          isCollapsed && "justify-center px-2"
+          "h-16 flex items-center border-b border-white/10 transition-all duration-300",
+          isCollapsed ? "justify-center px-0" : "px-6 gap-3"
         )}>
           <img
             src="/logo-transparent.png"
-            alt="The Final Conflict Ministry"
-            className="w-10 h-10 shrink-0"
+            alt="TFC"
+            className="w-8 h-8 shrink-0 object-contain"
           />
           <div className={cn(
-            "transition-all duration-300 overflow-hidden",
+            "transition-all duration-300 overflow-hidden whitespace-nowrap",
             isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
           )}>
-            <h1 className="text-lg font-bold whitespace-nowrap">The Final Conflict</h1>
-            <p className="text-xs text-muted-foreground whitespace-nowrap">Ministry Admin</p>
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-yellow-200 bg-clip-text text-transparent">
+              Ministry Hub
+            </h1>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className={cn(
-          "flex-1 overflow-y-auto p-4 space-y-6 transition-all duration-300",
-          "scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent hover:scrollbar-thumb-muted-foreground/30",
-          isCollapsed && "px-2"
+          "flex-1 overflow-y-auto py-6 space-y-6",
+          "scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20",
+          isCollapsed ? "px-3" : "px-4"
         )}>
           {menuGroups.map((group, groupIndex) => (
-            <div key={groupIndex} className="space-y-1">
-              {/* Group Heading - Hidden when collapsed */}
+            <div key={groupIndex} className="space-y-2">
+              {/* Group Heading */}
               {!isCollapsed && (
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 py-2">
+                <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-4 mb-2">
                   {group.title}
                 </h3>
               )}
@@ -128,24 +122,31 @@ export const Sidebar = ({ isCollapsed, onCollapseChange }: SidebarProps) => {
               {/* Group Items */}
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const isActive = location.pathname.startsWith(item.path);
 
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    onClick={() => setIsMobileOpen(false)}
+                    onClick={onMobileClose}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg transition-all duration-200 group relative",
-                      "hover:bg-secondary/50",
+                      "flex items-center gap-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                      isCollapsed ? "justify-center p-3" : "px-4 py-3",
                       isActive
-                        ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm"
-                        : "text-muted-foreground",
-                      isCollapsed ? "px-3 py-3 justify-center" : "px-4 py-3"
+                        ? "bg-primary/20 text-primary shadow-[0_0_20px_rgba(212,175,55,0.15)] border border-primary/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                     )}
                     title={isCollapsed ? item.label : undefined}
                   >
-                    <Icon className="w-5 h-5 shrink-0" />
+                    {isActive && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50" />
+                    )}
+                    
+                    <Icon className={cn(
+                      "w-5 h-5 shrink-0 transition-colors",
+                      isActive ? "text-primary" : "group-hover:text-white"
+                    )} />
+                    
                     <span className={cn(
                       "font-medium transition-all duration-300",
                       isCollapsed ? "w-0 opacity-0 absolute left-full ml-2" : "w-auto opacity-100"
@@ -155,7 +156,7 @@ export const Sidebar = ({ isCollapsed, onCollapseChange }: SidebarProps) => {
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                      <div className="absolute left-full ml-4 px-3 py-1.5 bg-popover text-popover-foreground text-sm font-medium rounded-lg shadow-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-[60] pointer-events-none">
                         {item.label}
                       </div>
                     )}
@@ -168,19 +169,17 @@ export const Sidebar = ({ isCollapsed, onCollapseChange }: SidebarProps) => {
 
         {/* Footer */}
         <div className={cn(
-          "p-4 border-t border-border transition-all duration-300",
+          "p-4 border-t border-white/10 bg-black/20",
           isCollapsed && "px-2 text-center"
         )}>
           <div className={cn(
-            "text-xs text-muted-foreground transition-all duration-300 overflow-hidden",
-            isCollapsed ? "h-0 opacity-0" : "h-auto opacity-100"
+            "text-xs text-muted-foreground transition-all duration-300",
+            isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100"
           )}>
-            <p>Version 1.0.0</p>
-            <p className="mt-1">© 2025 TFC Ministry</p>
+            <p>© 2025 TFC Ministry</p>
           </div>
-          {/* Mini version for collapsed state */}
           {isCollapsed && (
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[10px] text-muted-foreground font-mono">
               v1.0
             </div>
           )}

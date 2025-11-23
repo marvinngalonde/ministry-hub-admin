@@ -101,7 +101,7 @@ export function useCreatePresentation(onUploadProgress?: (progress: { media: num
       const mediaUrl = await uploadFile(
         formData.media_file,
         'presentations',
-        'media',
+        '', // Flat structure
         (progress) => {
           mediaProgress = progress;
           updateProgress();
@@ -112,7 +112,7 @@ export function useCreatePresentation(onUploadProgress?: (progress: { media: num
       const thumbnailUrl = await uploadFile(
         formData.thumbnail_file,
         'presentations',
-        'thumbnails',
+        'thumbnails', // Still using 'thumbnails' subfolder
         (progress) => {
           thumbnailProgress = progress;
           updateProgress();
@@ -177,7 +177,7 @@ export function useUpdatePresentation(id: string, onUploadProgress?: (progress: 
         mediaUrl = await uploadFile(
           formData.media_file,
           'presentations',
-          'media',
+          '', // Flat structure
           (progress) => {
             mediaProgress = progress;
             updateProgress();
@@ -190,7 +190,7 @@ export function useUpdatePresentation(id: string, onUploadProgress?: (progress: 
         thumbnailUrl = await uploadFile(
           formData.thumbnail_file,
           'presentations',
-          'thumbnails',
+          'thumbnails', // Still using 'thumbnails' subfolder
           (progress) => {
             thumbnailProgress = progress;
             updateProgress();

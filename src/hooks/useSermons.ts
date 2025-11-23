@@ -87,28 +87,26 @@ export function useSermon(id: string) {
   });
 }
 
-export function useCreateSermon(onUploadProgress?: (progress: { video: number; thumbnail: number; audio?: number }) => void) {
+export function useCreateSermon(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: SermonFormData & {
       video_file: File;
       thumbnail_file: File;
-      audio_file?: File; // Optional audio file
     }) => {
       let videoProgress = 0;
       let thumbnailProgress = 0;
-      let audioProgress = 0;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress, audio: audioProgress });
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
       };
 
       // Upload video
       const videoUrl = await uploadFile(
         formData.video_file,
         'sermons',
-        'videos',
+        '', // Flat structure
         (progress) => {
           videoProgress = progress;
           updateProgress();
@@ -119,26 +117,12 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
       const thumbnailUrl = await uploadFile(
         formData.thumbnail_file,
         'sermons',
-        'thumbnails',
+        'thumbnails', // Still using 'thumbnails' subfolder
         (progress) => {
           thumbnailProgress = progress;
           updateProgress();
         }
       );
-
-      // Upload audio if provided
-      let audioUrl: string | undefined;
-      if (formData.audio_file) {
-        audioUrl = await uploadFile(
-          formData.audio_file,
-          'sermons',
-          'audio',
-          (progress) => {
-            audioProgress = progress;
-            updateProgress();
-          }
-        );
-      }
 
       // Insert sermon
       const { data, error } = await supabase
@@ -150,8 +134,7 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
           duration: formData.duration,
           video_url: videoUrl,
           thumbnail_url: thumbnailUrl,
-          audio_url: audioUrl, // Include audio URL
-          featured: formData.featured,
+          is_featured: formData.featured, // Corrected column name
           status: formData.status,
           date_preached: formData.date_preached || new Date().toISOString(),
         })
@@ -179,24 +162,21 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
   });
 }
 
-export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: { video: number; thumbnail: number; audio?: number }) => void) {
+export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: Partial<SermonFormData> & {
       video_file?: File;
       thumbnail_file?: File;
-      audio_file?: File; // Optional audio file
     }) => {
       let videoUrl: string | undefined;
       let thumbnailUrl: string | undefined;
-      let audioUrl: string | undefined;
       let videoProgress = 100;
       let thumbnailProgress = 100;
-      let audioProgress = 100;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress, audio: audioProgress });
+        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
       };
 
       // Upload new video if provided
@@ -205,7 +185,7 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
         videoUrl = await uploadFile(
           formData.video_file,
           'sermons',
-          'videos',
+          '', // Flat structure
           (progress) => {
             videoProgress = progress;
             updateProgress();
@@ -219,32 +199,9 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
         thumbnailUrl = await uploadFile(
           formData.thumbnail_file,
           'sermons',
-          'thumbnails',
+          'thumbnails', // Still using 'thumbnails' subfolder
           (progress) => {
             thumbnailProgress = progress;
-            updateProgress();
-          }
-        );
-      }
-
-      // Upload new audio if provided
-      if (formData.audio_file) {
-        audioProgress = 0;
-        // Optionally, fetch existing sermon to delete old audio file
-        const { data: existingSermon } = await supabase
-          .from('sermons')
-          .select('audio_url')
-          .eq('id', sermonId)
-          .single();
-        if (existingSermon?.audio_url) {
-          await deleteFileFromUrl(existingSermon.audio_url, 'sermons');
-        }
-        audioUrl = await uploadFile(
-          formData.audio_file,
-          'sermons',
-          'audio',
-          (progress) => {
-            audioProgress = progress;
             updateProgress();
           }
         );
@@ -253,18 +210,18 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
       // Update sermon
       const updateData: any = {
         ...formData,
+        is_featured: formData.featured, // Corrected column name
         updated_at: new Date().toISOString(),
       };
 
       if (videoUrl) updateData.video_url = videoUrl;
       if (thumbnailUrl) updateData.thumbnail_url = thumbnailUrl;
-      if (audioUrl) updateData.audio_url = audioUrl; // Include audio URL
 
       // Remove file objects from update data
       delete updateData.video_file;
       delete updateData.thumbnail_file;
-      delete updateData.audio_file; // Remove audio file object
-
+      delete updateData.featured; // Remove old 'featured' property from formData
+      
       const { data, error } = await supabase
         .from('sermons')
         .update(updateData)

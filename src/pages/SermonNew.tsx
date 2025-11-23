@@ -19,9 +19,8 @@ export default function SermonNew() {
   const navigate = useNavigate();
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null); // New state for audio file
   const [description, setDescription] = useState('');
-  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number; audio?: number }>({ video: 0, thumbnail: 0 });
+  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
 
   const {
     register,
@@ -49,7 +48,6 @@ export default function SermonNew() {
       description,
       video_file: videoFile,
       thumbnail_file: thumbnailFile,
-      audio_file: audioFile || undefined, // Include audio file
     });
 
     navigate('/sermons');
@@ -154,17 +152,6 @@ export default function SermonNew() {
                 <p className="text-sm text-destructive">Thumbnail is required</p>
               )}
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Audio File (Optional)</Label>
-            <FileUpload
-              onFileSelect={setAudioFile}
-              accept={{ 'audio/*': ['.mp3', '.wav', '.aac'] }}
-              maxSize={200 * 1024 * 1024} // 200MB
-              label="Drop audio file here or click to upload"
-              fileType="audio"
-            />
           </div>
 
           <div className="flex items-center justify-between p-4 border border-border rounded-lg">

@@ -1,10 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Video, Users, MessageSquare, FileText, Film, BookOpen, Radio, Loader2, Plus, TrendingUp, Eye, Download } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
+import { BookOpen, FileText, Film, Loader2, MessageSquare, Plus, Radio, TrendingUp, Users, Video } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   // Fetch real data from Supabase
@@ -37,9 +36,7 @@ const Dashboard = () => {
       title: "Total Sermons",
       value: stats?.sermons || 0,
       icon: Video,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-950/20",
-      borderColor: "border-blue-200 dark:border-blue-800",
+      gradient: "from-blue-500 to-blue-600",
       link: "/sermons",
       description: "Spiritual teachings",
     },
@@ -47,9 +44,7 @@ const Dashboard = () => {
       title: "Total Users",
       value: stats?.users || 0,
       icon: Users,
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-950/20",
-      borderColor: "border-green-200 dark:border-green-800",
+      gradient: "from-green-500 to-green-600",
       link: "/users",
       description: "Community members",
     },
@@ -57,9 +52,7 @@ const Dashboard = () => {
       title: "Community Posts",
       value: stats?.posts || 0,
       icon: MessageSquare,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-950/20",
-      borderColor: "border-purple-200 dark:border-purple-800",
+      gradient: "from-purple-500 to-purple-600",
       link: "/community/posts",
       description: "Active discussions",
     },
@@ -67,81 +60,75 @@ const Dashboard = () => {
       title: "Total Content",
       value: stats?.totalContent || 0,
       icon: FileText,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50 dark:bg-orange-950/20",
-      borderColor: "border-orange-200 dark:border-orange-800",
+      gradient: "from-orange-500 to-orange-600",
       link: "/analytics",
       description: "All media items",
     },
   ];
 
   const contentBreakdown = [
-    { 
-      title: "Sermons", 
-      count: stats?.sermons || 0, 
-      icon: Video, 
-      color: "bg-gradient-to-br from-blue-500 to-blue-600",
-      textColor: "text-blue-600",
+    {
+      title: "Sermons",
+      count: stats?.sermons || 0,
+      icon: Video,
+      color: "bg-blue-500/10 text-blue-500",
       link: "/sermons",
       description: "Spiritual teachings and messages"
     },
-    { 
-      title: "Documentaries", 
-      count: stats?.documentaries || 0, 
-      icon: Film, 
-      color: "bg-gradient-to-br from-purple-500 to-purple-600",
-      textColor: "text-purple-600",
+    {
+      title: "Documentaries",
+      count: stats?.documentaries || 0,
+      icon: Film,
+      color: "bg-purple-500/10 text-purple-500",
       link: "/documentaries",
       description: "Educational documentaries"
     },
-    { 
-      title: "Presentations", 
-      count: stats?.presentations || 0, 
-      icon: Radio, 
-      color: "bg-gradient-to-br from-green-500 to-green-600",
-      textColor: "text-green-600",
+    {
+      title: "Presentations",
+      count: stats?.presentations || 0,
+      icon: Radio,
+      color: "bg-green-500/10 text-green-500",
       link: "/presentations",
       description: "Slides and presentations"
     },
-    { 
-      title: "Materials", 
-      count: stats?.materials || 0, 
-      icon: BookOpen, 
-      color: "bg-gradient-to-br from-orange-500 to-orange-600",
-      textColor: "text-orange-600",
+    {
+      title: "Materials",
+      count: stats?.materials || 0,
+      icon: BookOpen,
+      color: "bg-orange-500/10 text-orange-500",
       link: "/materials",
       description: "Study materials and resources"
     },
   ];
 
   const quickActions = [
-    { 
-      title: "Upload Sermon", 
-      link: "/sermons/new", 
+    {
+      title: "Upload Sermon",
+      link: "/sermons/new",
       icon: Video,
       description: "Add new spiritual teaching",
-      color: "hover:border-blue-300 dark:hover:border-blue-700"
+      color: "hover:border-blue-500/50 hover:bg-blue-500/5"
     },
-    { 
-      title: "Upload Documentary", 
-      link: "/documentaries/new", 
+    {
+      title: "Upload Documentary",
+      link: "/documentaries/new",
       icon: Film,
       description: "Add educational content",
-      color: "hover:border-purple-300 dark:hover:border-purple-700"
+      color: "hover:border-purple-500/50 hover:bg-purple-500/5"
     },
-    { 
-      title: "Upload Presentation", 
-      link: "/presentations/new", 
+    {
+      title: "Upload Presentation",
+      link: "/presentations/new",
       icon: Radio,
       description: "Add slides or talk",
-      color: "hover:border-green-300 dark:hover:border-green-700"
+      color: "hover:border-green-500/50 hover:bg-green-500/5"
     },
-    { 
-      title: "Upload Material", 
-      link: "/materials/new", 
+    {
+      title: "Upload Material",
+      link: "/materials/new",
       icon: BookOpen,
       description: "Add study resources",
-      color: "hover:border-orange-300 dark:hover:border-orange-700"
+      color: "hover:border-orange-500/50 hover:bg-orange-500/5"
     },
   ];
 
@@ -157,17 +144,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-4xl font-bold tracking-tight text-gradient">Dashboard</h1>
+          <p className="text-muted-foreground mt-2 text-lg">
             Welcome back! Here's an overview of your ministry's content and activity.
           </p>
         </div>
-        <Badge variant="secondary" className="w-fit">
-          <TrendingUp className="w-3 h-3 mr-1" />
+        <Badge variant="outline" className="w-fit px-4 py-2 bg-primary/10 text-primary border-primary/20 backdrop-blur-sm">
+          <TrendingUp className="w-4 h-4 mr-2" />
           Real-time Analytics
         </Badge>
       </div>
@@ -179,155 +166,149 @@ const Dashboard = () => {
 
           return (
             <Link key={stat.title} to={stat.link}>
-              <Card className={`group hover:shadow-lg transition-all duration-300 cursor-pointer border ${stat.borderColor} hover:scale-[1.02]`}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">
-                        {stat.title}
-                      </p>
-                      <div className="text-2xl font-bold">{stat.value.toLocaleString()}</div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {stat.description}
-                      </p>
+              <div className="premium-card rounded-2xl p-6 relative overflow-hidden group cursor-pointer">
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.gradient} opacity-10 rounded-full blur-2xl -mr-16 -mt-16 transition-opacity group-hover:opacity-20`} />
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <div className={`p-3 rounded-full ${stat.bgColor} group-hover:scale-110 transition-transform`}>
-                      <Icon className={`w-6 h-6 ${stat.color}`} />
-                    </div>
+                    <span className="text-xs font-medium text-muted-foreground bg-white/5 px-2 py-1 rounded-full border border-white/5">
+                      +2.5%
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-medium text-muted-foreground">{stat.title}</h3>
+                    <div className="text-3xl font-bold text-foreground tracking-tight">
+                      {stat.value.toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground/80">{stat.description}</p>
+                  </div>
+                </div>
+              </div>
             </Link>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Content Breakdown */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Content Breakdown
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {contentBreakdown.map((content) => {
-                  const Icon = content.icon;
-                  return (
-                    <Link key={content.title} to={content.link}>
-                      <div className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-all duration-200 cursor-pointer group hover:bg-card/50">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl ${content.color} flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
-                            <Icon className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-foreground">{content.title}</p>
-                            <p className="text-sm text-muted-foreground">{content.description}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold">{content.count.toLocaleString()}</div>
-                          <div className={`text-xs font-medium ${content.textColor}`}>
-                            View all →
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+          <div className="glass-panel rounded-2xl p-6 h-full">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <FileText className="w-5 h-5 text-primary" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <h2 className="text-xl font-semibold">Content Breakdown</h2>
+            </div>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              Quick Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {quickActions.map((action) => {
-                const Icon = action.icon;
+            <div className="grid gap-4">
+              {contentBreakdown.map((content) => {
+                const Icon = content.icon;
                 return (
-                  <Link key={action.title} to={action.link}>
-                    <Button 
-                      variant="outline" 
-                      className={`w-full justify-start h-auto py-4 px-4 border-2 group transition-all duration-200 ${action.color} hover:shadow-sm`}
-                    >
-                      <div className="flex items-center gap-3 w-full">
-                        <div className="p-2 rounded-lg bg-muted group-hover:scale-110 transition-transform">
-                          <Icon className="w-4 h-4" />
+                  <Link key={content.title} to={content.link}>
+                    <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl ${content.color} flex items-center justify-center shadow-inner`}>
+                          <Icon className="w-6 h-6" />
                         </div>
-                        <div className="text-left flex-1">
-                          <p className="font-medium text-sm">{action.title}</p>
-                          <p className="text-xs text-muted-foreground">{action.description}</p>
+                        <div>
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors">{content.title}</p>
+                          <p className="text-sm text-muted-foreground">{content.description}</p>
                         </div>
-                        <Plus className="w-4 h-4 text-muted-foreground group-hover:scale-110 transition-transform" />
                       </div>
-                    </Button>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold">{content.count.toLocaleString()}</div>
+                      </div>
+                    </div>
                   </Link>
                 );
               })}
             </div>
+          </div>
+        </div>
 
-            {/* Additional Stats */}
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-              <h4 className="font-medium text-sm mb-3">Platform Overview</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Media Items</span>
-                  <span className="font-medium">{stats?.totalContent || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Community Members</span>
-                  <span className="font-medium">{stats?.users || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Active Discussions</span>
-                  <span className="font-medium">{stats?.posts || 0}</span>
-                </div>
+        {/* Quick Actions */}
+        <div className="glass-panel rounded-2xl p-6 h-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Plus className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-xl font-semibold">Quick Actions</h2>
+          </div>
+
+          <div className="space-y-4">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link key={action.title} to={action.link} className="block">
+                  <div className={`p-4 rounded-xl border border-white/5 bg-white/5 transition-all duration-300 group ${action.color}`}>
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 rounded-lg bg-background/50 group-hover:scale-110 transition-transform">
+                        <Icon className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{action.title}</p>
+                        <p className="text-xs text-muted-foreground">{action.description}</p>
+                      </div>
+                      <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Platform Overview */}
+          <div className="mt-8 p-5 rounded-xl bg-gradient-to-br from-card to-card/50 border border-white/5">
+            <h4 className="font-medium text-sm mb-4 text-muted-foreground uppercase tracking-wider">Platform Overview</h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Total Media Items</span>
+                <Badge variant="secondary" className="bg-white/5 hover:bg-white/10">{stats?.totalContent || 0}</Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Community Members</span>
+                <Badge variant="secondary" className="bg-white/5 hover:bg-white/10">{stats?.users || 0}</Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Active Discussions</span>
+                <Badge variant="secondary" className="bg-white/5 hover:bg-white/10">{stats?.posts || 0}</Badge>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Empty State */}
       {stats?.totalContent === 0 && (
-        <Card className="border-dashed border-2 bg-muted/20">
-          <CardContent className="p-8 text-center">
-            <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Welcome to Your Ministry Dashboard</h3>
-              <p className="text-muted-foreground mb-6">
-                Get started by uploading your first piece of content. Share sermons, documentaries, presentations, and study materials with your community.
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Link to="/sermons/new">
-                  <Button className="gap-2">
-                    <Video className="w-4 h-4" />
-                    Upload Sermon
-                  </Button>
-                </Link>
-                <Link to="/documentaries/new">
-                  <Button variant="outline" className="gap-2">
-                    <Film className="w-4 h-4" />
-                    Upload Documentary
-                  </Button>
-                </Link>
-              </div>
+        <div className="glass-panel rounded-2xl p-12 text-center border-dashed border-2 border-white/10">
+          <div className="max-w-md mx-auto">
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+              <FileText className="w-10 h-10 text-primary" />
             </div>
-          </CardContent>
-        </Card>
+            <h3 className="text-2xl font-bold mb-3">Welcome to Your Ministry Dashboard</h3>
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              Get started by uploading your first piece of content. Share sermons, documentaries, presentations, and study materials with your community.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link to="/sermons/new">
+                <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
+                  <Video className="w-5 h-5" />
+                  Upload Sermon
+                </Button>
+              </Link>
+              <Link to="/documentaries/new">
+                <Button variant="outline" size="lg" className="gap-2">
+                  <Film className="w-5 h-5" />
+                  Upload Documentary
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
