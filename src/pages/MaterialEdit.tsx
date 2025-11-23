@@ -44,7 +44,7 @@ export default function MaterialEdit() {
   const { data: material, isLoading } = useMaterial(id!);
   const [uploadProgress, setUploadProgress] = useState<{ file: number; thumbnail: number }>({ file: 0, thumbnail: 0 });
   const updateMaterial = useUpdateMaterial(id!, setUploadProgress);
-  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   const form = useForm<MaterialFormData>({
@@ -73,8 +73,8 @@ export default function MaterialEdit() {
   const onSubmit = async (data: MaterialFormData) => {
     const formData: any = { ...data };
 
-    if (documentFile) {
-      formData.document_file = documentFile;
+    if (file) {
+      formData.file = file;
     }
 
     if (thumbnailFile) {
@@ -200,14 +200,14 @@ export default function MaterialEdit() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <Label>Document File</Label>
+                <Label>File</Label>
                 <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                  Current: {material.content_url ? 'Uploaded' : 'None'}
+                  Current: {material.file_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
-                  accept="application/pdf,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept={{ 'application/*': ['.pdf', '.doc', '.docx'] }}
                   maxSize={50 * 1024 * 1024}
-                  onFileSelect={setDocumentFile}
+                  onFileSelect={setFile}
                   label="Upload new document to replace current one"
                 />
               </div>

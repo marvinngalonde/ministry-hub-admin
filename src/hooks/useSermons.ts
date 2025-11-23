@@ -106,7 +106,7 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
       const videoUrl = await uploadFile(
         formData.video_file,
         'sermons',
-        'videos',
+        '', // Flat structure
         (progress) => {
           videoProgress = progress;
           updateProgress();
@@ -117,7 +117,7 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
       const thumbnailUrl = await uploadFile(
         formData.thumbnail_file,
         'sermons',
-        'thumbnails',
+        'thumbnails', // Still using 'thumbnails' subfolder
         (progress) => {
           thumbnailProgress = progress;
           updateProgress();
@@ -134,7 +134,7 @@ export function useCreateSermon(onUploadProgress?: (progress: { video: number; t
           duration: formData.duration,
           video_url: videoUrl,
           thumbnail_url: thumbnailUrl,
-          featured: formData.featured,
+          is_featured: formData.featured, // Corrected column name
           status: formData.status,
           date_preached: formData.date_preached || new Date().toISOString(),
         })
@@ -185,7 +185,7 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
         videoUrl = await uploadFile(
           formData.video_file,
           'sermons',
-          'videos',
+          '', // Flat structure
           (progress) => {
             videoProgress = progress;
             updateProgress();
@@ -199,7 +199,7 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
         thumbnailUrl = await uploadFile(
           formData.thumbnail_file,
           'sermons',
-          'thumbnails',
+          'thumbnails', // Still using 'thumbnails' subfolder
           (progress) => {
             thumbnailProgress = progress;
             updateProgress();
@@ -210,6 +210,7 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
       // Update sermon
       const updateData: any = {
         ...formData,
+        is_featured: formData.featured, // Corrected column name
         updated_at: new Date().toISOString(),
       };
 
@@ -219,7 +220,8 @@ export function useUpdateSermon(sermonId: string, onUploadProgress?: (progress: 
       // Remove file objects from update data
       delete updateData.video_file;
       delete updateData.thumbnail_file;
-
+      delete updateData.featured; // Remove old 'featured' property from formData
+      
       const { data, error } = await supabase
         .from('sermons')
         .update(updateData)

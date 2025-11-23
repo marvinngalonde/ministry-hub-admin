@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Filter, Trash2, Eye, Edit } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Eye, Edit, MoreVertical, Download, Calendar, User, Clock } from 'lucide-react';
 import { useSermons, useDeleteSermon, useBulkDeleteSermons } from '@/hooks/useSermons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function Sermons() {
   const [search, setSearch] = useState('');
@@ -42,9 +49,6 @@ export default function Sermons() {
     page,
     perPage: 20,
   });
-
-  // Debug logging
-  console.log('📊 Sermons Page Data:', { data, isLoading, error });
 
   const deleteSermon = useDeleteSermon();
   const bulkDelete = useBulkDeleteSermons();
@@ -78,191 +82,271 @@ export default function Sermons() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 md:p-0">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Sermons</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage sermon videos and content</p>
+          <h1 className="text-3xl font-bold tracking-tight">Sermons</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage and organize your sermon videos and content
+          </p>
         </div>
-        <Link to="/sermons/new" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto min-h-[44px] active:scale-95 transition-transform">
-            <Plus className="w-4 h-4 sm:h-4 sm:w-4 mr-2" />
+        <Link to="/sermons/new">
+          <Button className="gap-2">
+            <Plus className="w-4 h-4" />
             Upload Sermon
           </Button>
         </Link>
       </div>
 
-      <Card className="p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4 sm:h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by title or speaker..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 min-h-[44px]"
-            />
-          </div>
-          <Select value={status} onValueChange={(v: any) => setStatus(v)}>
-            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
-              <Filter className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-            <SelectTrigger className="w-full sm:w-[180px] min-h-[44px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="latest">Latest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="title">Title A-Z</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {selectedIds.length > 0 && (
-          <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-            <p className="text-sm sm:text-base text-muted-foreground">
-              {selectedIds.length} selected
-            </p>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleBulkDelete}
-              disabled={bulkDelete.isPending}
-              className="w-full sm:w-auto min-h-[44px]"
-            >
-              <Trash2 className="w-4 h-4 sm:w-4 sm:h-4 mr-2" />
-              Delete Selected
-            </Button>
-          </div>
-        )}
-
-        {error ? (
-          <div className="text-center py-8 sm:py-12 px-4">
-            <p className="text-sm sm:text-base text-destructive font-semibold">Error loading sermons</p>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
-            <p className="text-xs text-muted-foreground mt-4">Check the browser console for details</p>
-          </div>
-        ) : isLoading ? (
-          <div className="text-center py-8 sm:py-12 px-4">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-            <p className="mt-2 text-xs sm:text-sm text-muted-foreground">Loading sermons...</p>
-          </div>
-        ) : !data?.sermons.length ? (
-          <div className="text-center py-8 sm:py-12 px-4">
-            <p className="text-sm sm:text-base text-muted-foreground">No sermons found</p>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-              Total in database: {data?.total || 0}
-            </p>
-            <Link to="/sermons/new" className="mt-4 inline-block w-full sm:w-auto">
-              <Button className="w-full sm:w-auto min-h-[44px]">Upload Your First Sermon</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <div className="inline-block min-w-full align-middle px-4 sm:px-0">
-              <div className="rounded-md border">
-                <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">
-                    <Checkbox
-                      checked={selectedIds.length === data.sermons.length}
-                      onCheckedChange={toggleSelectAll}
-                    />
-                  </TableHead>
-                  <TableHead className="w-[100px] hidden sm:table-cell">Thumbnail</TableHead>
-                  <TableHead className="min-w-[150px]">Title</TableHead>
-                  <TableHead className="min-w-[120px] hidden md:table-cell">Speaker</TableHead>
-                  <TableHead className="min-w-[100px] hidden lg:table-cell">Duration</TableHead>
-                  <TableHead className="min-w-[100px] hidden sm:table-cell">Status</TableHead>
-                  <TableHead className="min-w-[100px] hidden lg:table-cell">Date</TableHead>
-                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.sermons.map((sermon) => (
-                  <TableRow key={sermon.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedIds.includes(sermon.id)}
-                        onCheckedChange={() => toggleSelect(sermon.id)}
-                      />
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <img
-                        src={sermon.thumbnail_url}
-                        alt={sermon.title}
-                        className="w-16 h-10 object-cover rounded"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{sermon.title}</TableCell>
-                    <TableCell className="hidden md:table-cell">{sermon.speaker}</TableCell>
-                    <TableCell className="hidden lg:table-cell">{sermon.duration} min</TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <Badge variant={sermon.status === 'published' ? 'default' : 'secondary'}>
-                        {sermon.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      {new Date(sermon.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1 sm:gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(sermon.video_url, '_blank')}
-                          title="View Video"
-                          className="h-9 w-9 p-0"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Link to={`/sermons/${sermon.id}/edit`}>
-                          <Button variant="ghost" size="sm" title="Edit" className="h-9 w-9 p-0">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDeleteId(sermon.id)}
-                          title="Delete"
-                          className="h-9 w-9 p-0"
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-              </div>
+      {/* Filters Card */}
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Filters & Search</CardTitle>
+          <CardDescription>
+            Find sermons by title, speaker, or status
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by title or speaker..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 flex-1 lg:flex-none">
+              <Select value={status} onValueChange={(v: any) => setStatus(v)}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="latest">Latest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="title">Title A-Z</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        )}
+
+          {/* Bulk Actions */}
+          {selectedIds.length > 0 && (
+            <div className="mt-4 p-4 bg-muted/50 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-primary">{selectedIds.length}</span>
+                </div>
+                <div>
+                  <p className="font-medium text-sm">{selectedIds.length} sermons selected</p>
+                  <p className="text-xs text-muted-foreground">Actions will apply to all selected items</p>
+                </div>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={bulkDelete.isPending}
+                className="gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete Selected
+              </Button>
+            </div>
+          )}
+        </CardContent>
       </Card>
 
+      {/* Results Card */}
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Sermons</CardTitle>
+          <CardDescription>
+            {data?.total || 0} sermons found
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {error ? (
+            <div className="text-center py-12 px-4">
+              <div className="w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-6 h-6 text-destructive" />
+              </div>
+              <p className="text-destructive font-semibold mb-2">Error loading sermons</p>
+              <p className="text-sm text-muted-foreground mb-4">{(error as Error).message}</p>
+              <Button variant="outline" onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            </div>
+          ) : isLoading ? (
+            <div className="text-center py-12 px-4">
+              <div className="inline-flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="mt-3 text-muted-foreground">Loading sermons...</p>
+            </div>
+          ) : !data?.sermons.length ? (
+            <div className="text-center py-12 px-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold text-lg mb-2">No sermons found</h3>
+              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                {search || status !== 'all' ? 'Try adjusting your search filters' : 'Get started by uploading your first sermon'}
+              </p>
+              <Link to="/sermons/new">
+                <Button className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Upload First Sermon
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="border-t">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={selectedIds.length === data.sermons.length && data.sermons.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                      />
+                    </TableHead>
+                    <TableHead className="w-20">Thumbnail</TableHead>
+                    <TableHead className="min-w-[200px]">Sermon Details</TableHead>
+                    <TableHead className="min-w-[120px]">Speaker</TableHead>
+                    <TableHead className="w-24 text-center">Duration</TableHead>
+                    <TableHead className="w-28">Status</TableHead>
+                    <TableHead className="w-32">Date</TableHead>
+                    <TableHead className="w-16"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.sermons.map((sermon) => (
+                    <TableRow key={sermon.id} className="group hover:bg-muted/50">
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedIds.includes(sermon.id)}
+                          onCheckedChange={() => toggleSelect(sermon.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="w-16 h-10 rounded-md overflow-hidden border">
+                          <img
+                            src={sermon.thumbnail_url}
+                            alt={sermon.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                            {sermon.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+                            {sermon.description}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm">{sermon.speaker}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4" />
+                          {sermon.duration} min
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={sermon.status === 'published' ? 'default' : 'secondary'}
+                          className="capitalize"
+                        >
+                          {sermon.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          {new Date(sermon.created_at).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem onClick={() => window.open(sermon.video_url, '_blank')}>
+                              <Eye className="w-4 h-4 mr-2" />
+                              View Video
+                            </DropdownMenuItem>
+                            <Link to={`/sermons/${sermon.id}/edit`}>
+                              <DropdownMenuItem>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit Details
+                              </DropdownMenuItem>
+                            </Link>
+                            <DropdownMenuItem>
+                              <Download className="w-4 h-4 mr-2" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              onClick={() => setDeleteId(sermon.id)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete Sermon
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent className="mx-4 sm:mx-auto max-w-[calc(100%-2rem)] sm:max-w-lg">
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Sermon?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the sermon and all associated files. This action cannot be undone.
+              This action cannot be undone. This will permanently delete the sermon "
+              {data?.sermons.find(s => s.id === deleteId)?.title}" and remove all associated files from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-              Delete
+            <AlertDialogAction 
+              onClick={handleDelete} 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteSermon.isPending}
+            >
+              {deleteSermon.isPending ? 'Deleting...' : 'Delete Sermon'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

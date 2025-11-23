@@ -43,9 +43,9 @@ export default function PresentationEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: presentation, isLoading } = usePresentation(id!);
-  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const [uploadProgress, setUploadProgress] = useState<{ media: number; thumbnail: number }>({ media: 0, thumbnail: 0 });
   const updatePresentation = useUpdatePresentation(id!, setUploadProgress);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   const form = useForm<PresentationFormData>({
@@ -76,8 +76,8 @@ export default function PresentationEdit() {
   const onSubmit = async (data: PresentationFormData) => {
     const formData: any = { ...data };
 
-    if (videoFile) {
-      formData.video_file = videoFile;
+    if (mediaFile) {
+      formData.media_file = mediaFile;
     }
 
     if (thumbnailFile) {
@@ -112,7 +112,7 @@ export default function PresentationEdit() {
       <div className="flex items-center gap-3 sm:gap-4">
         <Link to="/presentations">
           <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
-            <ArrowLeft className="h-4 w-4 sm:h-5 sm:h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </Link>
         <div>
@@ -223,15 +223,15 @@ export default function PresentationEdit() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <Label>Video File</Label>
+                <Label>Media File</Label>
                 <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                  Current: {presentation.video_url ? 'Uploaded' : 'None'}
+                  Current: {presentation.media_url ? 'Uploaded' : 'None'}
                 </p>
                 <FileUpload
-                  accept="video/*"
+                  accept="video/*,audio/*"
                   maxSize={10 * 1024 * 1024 * 1024}
-                  onFileSelect={setVideoFile}
-                  label="Upload new video to replace current one"
+                  onFileSelect={setMediaFile}
+                  label="Upload new media to replace current one"
                 />
               </div>
 

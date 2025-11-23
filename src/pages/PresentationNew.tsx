@@ -41,9 +41,9 @@ type PresentationFormData = z.infer<typeof presentationSchema>;
 
 export default function PresentationNew() {
   const navigate = useNavigate();
-  const [uploadProgress, setUploadProgress] = useState<{ video: number; thumbnail: number }>({ video: 0, thumbnail: 0 });
+  const [uploadProgress, setUploadProgress] = useState<{ media: number; thumbnail: number }>({ media: 0, thumbnail: 0 });
   const createPresentation = useCreatePresentation(setUploadProgress);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
   const form = useForm<PresentationFormData>({
@@ -59,14 +59,14 @@ export default function PresentationNew() {
   });
 
   const onSubmit = async (data: PresentationFormData) => {
-    if (!videoFile || !thumbnailFile) {
-      alert('Please upload both video and thumbnail files');
+    if (!mediaFile || !thumbnailFile) {
+      alert('Please upload both media and thumbnail files');
       return;
     }
 
     await createPresentation.mutateAsync({
       ...data,
-      video_file: videoFile,
+      media_file: mediaFile,
       thumbnail_file: thumbnailFile,
     });
 
@@ -189,19 +189,19 @@ export default function PresentationNew() {
 
             <div className="space-y-6">
               <div>
-                <Label>Video File *</Label>
+                <Label>Media File *</Label>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Upload the presentation video (MP4, MOV, or AVI - Max 2GB)
+                  Upload the presentation media (MP4, MOV, AVI, MP3, etc. - Max 2GB)
                 </p>
                 <FileUpload
-                  accept="video/*"
+                  accept="video/*,audio/*"
                   maxSize={10 * 1024 * 1024 * 1024}
-                  onFileSelect={setVideoFile}
-                  label="Drag & drop or click to upload video"
+                  onFileSelect={setMediaFile}
+                  label="Drag & drop or click to upload media"
                 />
-                {videoFile && (
+                {mediaFile && (
                   <p className="text-sm text-green-600 mt-2">
-                    ✓ {videoFile.name} selected
+                    ✓ {mediaFile.name} selected
                   </p>
                 )}
               </div>
@@ -260,7 +260,7 @@ export default function PresentationNew() {
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={createPresentation.isPending || !videoFile || !thumbnailFile}>
+            <Button type="submit" disabled={createPresentation.isPending || !mediaFile || !thumbnailFile}>
               {createPresentation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}

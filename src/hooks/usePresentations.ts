@@ -82,28 +82,28 @@ export function usePresentation(id: string) {
   });
 }
 
-export function useCreatePresentation(onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
+export function useCreatePresentation(onUploadProgress?: (progress: { media: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: PresentationFormData & {
-      video_file: File;
+      media_file: File;
       thumbnail_file: File;
     }) => {
-      let videoProgress = 0;
+      let mediaProgress = 0;
       let thumbnailProgress = 0;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+        onUploadProgress?.({ media: mediaProgress, thumbnail: thumbnailProgress });
       };
 
-      // Upload video
-      const videoUrl = await uploadFile(
-        formData.video_file,
+      // Upload media
+      const mediaUrl = await uploadFile(
+        formData.media_file,
         'presentations',
-        'videos',
+        '', // Flat structure
         (progress) => {
-          videoProgress = progress;
+          mediaProgress = progress;
           updateProgress();
         }
       );
@@ -112,7 +112,7 @@ export function useCreatePresentation(onUploadProgress?: (progress: { video: num
       const thumbnailUrl = await uploadFile(
         formData.thumbnail_file,
         'presentations',
-        'thumbnails',
+        'thumbnails', // Still using 'thumbnails' subfolder
         (progress) => {
           thumbnailProgress = progress;
           updateProgress();
@@ -127,7 +127,7 @@ export function useCreatePresentation(onUploadProgress?: (progress: { video: num
           speaker: formData.speaker,
           description: formData.description,
           duration: formData.duration,
-          video_url: videoUrl,
+          media_url: mediaUrl,
           thumbnail_url: thumbnailUrl,
           status: formData.status,
         })
@@ -155,31 +155,31 @@ export function useCreatePresentation(onUploadProgress?: (progress: { video: num
   });
 }
 
-export function useUpdatePresentation(id: string, onUploadProgress?: (progress: { video: number; thumbnail: number }) => void) {
+export function useUpdatePresentation(id: string, onUploadProgress?: (progress: { media: number; thumbnail: number }) => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (formData: Partial<PresentationFormData> & {
-      video_file?: File;
+      media_file?: File;
       thumbnail_file?: File;
     }) => {
-      let videoUrl: string | undefined;
+      let mediaUrl: string | undefined;
       let thumbnailUrl: string | undefined;
-      let videoProgress = 100;
+      let mediaProgress = 100;
       let thumbnailProgress = 100;
 
       const updateProgress = () => {
-        onUploadProgress?.({ video: videoProgress, thumbnail: thumbnailProgress });
+        onUploadProgress?.({ media: mediaProgress, thumbnail: thumbnailProgress });
       };
 
-      if (formData.video_file) {
-        videoProgress = 0;
-        videoUrl = await uploadFile(
-          formData.video_file,
+      if (formData.media_file) {
+        mediaProgress = 0;
+        mediaUrl = await uploadFile(
+          formData.media_file,
           'presentations',
-          'videos',
+          '', // Flat structure
           (progress) => {
-            videoProgress = progress;
+            mediaProgress = progress;
             updateProgress();
           }
         );
@@ -190,7 +190,7 @@ export function useUpdatePresentation(id: string, onUploadProgress?: (progress: 
         thumbnailUrl = await uploadFile(
           formData.thumbnail_file,
           'presentations',
-          'thumbnails',
+          'thumbnails', // Still using 'thumbnails' subfolder
           (progress) => {
             thumbnailProgress = progress;
             updateProgress();
@@ -203,10 +203,10 @@ export function useUpdatePresentation(id: string, onUploadProgress?: (progress: 
         updated_at: new Date().toISOString(),
       };
 
-      if (videoUrl) updateData.video_url = videoUrl;
+      if (mediaUrl) updateData.media_url = mediaUrl;
       if (thumbnailUrl) updateData.thumbnail_url = thumbnailUrl;
 
-      delete updateData.video_file;
+      delete updateData.media_file;
       delete updateData.thumbnail_file;
 
       const { data, error } = await supabase
@@ -237,15 +237,15 @@ export function useDeletePresentation() {
     mutationFn: async (id: string) => {
       const { data: presentation } = await supabase
         .from('presentations')
-        .select('video_url, thumbnail_url')
+        .select('media_url, thumbnail_url')
         .eq('id', id)
         .single();
 
       const { error } = await supabase.from('presentations').delete().eq('id', id);
       if (error) throw error;
 
-      if (presentation?.video_url) {
-        await deleteFileFromUrl(presentation.video_url, 'presentations');
+      if (presentation?.media_url) {
+        await deleteFileFromUrl(presentation.media_url, 'presentations');
       }
       if (presentation?.thumbnail_url) {
         await deleteFileFromUrl(presentation.thumbnail_url, 'presentations');
